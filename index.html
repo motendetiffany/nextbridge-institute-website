@@ -1,0 +1,2484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NextBridge Institute of Professional Studies</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  /* ============ TOKENS ============
+     Ink        #0B2545  - painted-steel navy, the truss ironwork
+     Signal     #E2A63B  - hazard/signal-lamp amber, the one bold accent
+     Rivet      #6E7A8A  - muted steel grey, secondary ink
+     Parchment  #F6F2E9  - blueprint paper background
+     Blueline   #E4EBF0  - pale drafting-blue panel fill
+     Rivet-line #D8D2C4  - hairline rule on parchment
+  ================================== */
+  :root{
+    --ink:#122F55; --ink-2:#1B4372;
+    --signal:#E8792E; --signal-deep:#C05F1C;
+    --rivet:#6E7A8A; --rivet-soft:#9AA6B4;
+    --parchment:#F6F2E9; --paper:#FCFAF5;
+    --blueline:#E4EBF0; --blueline-2:#D9E4EC;
+    --hair:#DAD3C2; --hair-dark:rgba(255,255,255,.14);
+    --danger:#A83B26; --ok:#2E6E4E;
+    --radius:6px;
+  }
+  a[onclick]{cursor:pointer;}
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} *{animation:none !important; transition:none !important;} }
+
+  body{
+    margin:0; background:var(--parchment); color:var(--ink);
+    font-family:'IBM Plex Sans',sans-serif; line-height:1.6; font-size:15.5px;
+    -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(11,37,69,0.05) 1px, transparent 1px);
+    background-size:24px 24px;
+  }
+  h1,h2,h3,h4{font-family:'Fraunces',serif; margin:0; color:var(--ink); letter-spacing:-0.015em; font-weight:600;}
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  button{font-family:inherit; cursor:pointer;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 24px;}
+  .icon{width:1em; height:1em; stroke:currentColor; fill:none; stroke-width:1.6; vertical-align:-0.15em;}
+
+  .tag{
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:600; letter-spacing:.09em; text-transform:uppercase;
+    color:var(--signal-deep); display:inline-flex; align-items:center; gap:9px; margin-bottom:12px;
+  }
+  .tag::before{content:""; width:26px; height:1px; background:var(--signal-deep); display:inline-block;}
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:9px;
+    padding:13px 24px; border-radius:var(--radius); font-weight:600; font-size:13.5px;
+    letter-spacing:.02em; border:1.5px solid transparent; transition:transform .12s ease, background .18s, border-color .18s, color .18s;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn-signal{background:var(--signal); color:var(--ink); border-color:var(--signal);}
+  .btn-signal:hover{background:var(--signal-deep); border-color:var(--signal-deep);}
+  .btn-line{border-color:rgba(255,255,255,.4); color:#fff;}
+  .btn-line:hover{background:rgba(255,255,255,.1); border-color:#fff;}
+  .btn-ink{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .btn-ink:hover{background:var(--ink-2);}
+  .btn-ghost{background:transparent; color:var(--ink); border-color:var(--hair);}
+  .btn-ghost:hover{border-color:var(--ink);}
+  .btn-ghost.tab-active{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .btn-sm{padding:9px 16px; font-size:12.5px;}
+
+  /* ===== Header ===== */
+  .topbar{background:var(--ink); color:#a9bcd6; font-size:12px; font-family:'IBM Plex Mono',monospace;}
+  .topbar .wrap{display:flex; justify-content:space-between; align-items:center; padding:7px 24px; flex-wrap:wrap; gap:6px;}
+  .topbar .contact-strip{display:flex; gap:20px; flex-wrap:wrap;}
+  header.site-header{
+    background:var(--ink); position:sticky; top:0; z-index:50; border-bottom:1px solid rgba(255,255,255,.08);
+    transition:padding .25s ease;
+  }
+  .nav-row{display:flex; align-items:center; justify-content:space-between; padding:16px 24px; transition:padding .25s ease;}
+  header.shrink .nav-row{padding:10px 24px;}
+  .brand{display:flex; align-items:center; gap:12px; color:#fff;}
+  .brand-mark{
+    width:70px; height:70px; border-radius:0; flex:none;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono',monospace; font-weight:600; color:var(--signal); font-size:13px; letter-spacing:.03em;
+    overflow:visible; position:relative; background: transparent;
+  }
+  .brand-mark img{width:70px !important; height:70px !important; object-fit:contain; display:block;}
+  .brand-mark .ph-fallback{border:none; padding:0; background:var(--ink); color:var(--signal); font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px;}
+  .brand-mark .ph-fallback span, .brand-mark .ph-fallback small{display:none;}
+  .brand-text{line-height:1.15;}
+  .brand-text b{display:block; font-family:'Fraunces',serif; font-size:16.5px; color:#fff; font-weight:600;}
+  .brand-text span{display:block; font-size:10px; letter-spacing:.1em; color:var(--signal); text-transform:uppercase; font-family:'IBM Plex Mono',monospace; margin-top:2px;}
+  nav.main-nav{display:flex; align-items:center; gap:2px;}
+  nav.main-nav .navlink{
+    color:#b9c8de; font-weight:500; font-size:13.5px; padding:9px 13px; border-radius:4px; position:relative;
+  }
+  .nb-text{
+    font-family: 'IBM Plex Sans'sans-serif;
+    font-size: 28px;font-weight: 700; letter-spacing: -2px; display: flex; align-items: center;justify-content: center;width: 58px; height: 58px; color: var(--signal);
+  }
+  .nb-text span{
+    color: #fff;
+  }
+  .nb-text i{
+    color: var(--signal); font-style: normal;
+  }
+  nav.main-nav .navlink:hover{color:#fff;}
+  nav.main-nav .navlink.active{color:#fff;}
+  nav.main-nav .navlink.active::after{content:""; position:absolute; left:13px; right:13px; bottom:2px; height:2px; background:var(--signal);}
+  .nav-cta{display:flex; align-items:center; gap:10px;}
+  .hamburger{display:none; background:none; border:none; color:#fff; font-size:22px; padding:4px 8px;}
+  .mobile-only-link{display:none;}
+
+  .nav-item{position:relative;}
+  .nav-item .navlink{display:flex; align-items:center; gap:5px;}
+  .nav-item .navlink svg{width:10px; height:10px; transition:transform .15s;}
+  .nav-item:hover .navlink svg, .nav-item.open .navlink svg{transform:rotate(180deg);}
+  .nav-dropdown{
+    position:absolute; top:calc(100% + 10px); left:0; min-width:250px; background:var(--ink);
+    border:1px solid rgba(255,255,255,.14); border-radius:6px; padding:6px;
+    opacity:0; visibility:hidden; transform:translateY(6px); transition:opacity .15s, transform .15s, visibility .15s;
+    box-shadow:0 20px 40px rgba(0,0,0,.35); z-index:60;
+  }
+  .nav-item:hover .nav-dropdown, .nav-item.open .nav-dropdown{opacity:1; visibility:visible; transform:none;}
+  .nav-dropdown a{
+    display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 13px; border-radius:4px;
+    font-size:13.5px; color:#cdd9ea; font-weight:500;
+  }
+  .nav-dropdown a:hover{background:rgba(255,255,255,.07); color:#fff;}
+  .nav-dropdown a .code{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--signal); background:rgba(226,166,59,.12); padding:2px 7px; border-radius:3px;}
+  .nav-dropdown-divider{height:1px; background:rgba(255,255,255,.1); margin:6px 4px;}
+
+  /* ===== truss divider (signature) ===== */
+  .truss-wrap{line-height:0; overflow:hidden;}
+  .truss-path{stroke-dasharray:2400; stroke-dashoffset:2400; transition:stroke-dashoffset 1.4s cubic-bezier(.2,.7,.2,1);}
+  .truss-path.draw{stroke-dashoffset:0;}
+
+  .logo-img{
+    width: 70px !important;
+    height: 70px !important;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* ===== Hero ===== */
+  .hero{position:relative; background:var(--ink); color:#fff; overflow:hidden;}
+  .hero-photo{position:absolute; inset:0; z-index:0;}
+  .hero-photo::after{
+    content:""; position:absolute; inset:0; z-index:1; pointer-events:none; overflow: hidden;
+    background:rgba(8,20,38,.55);
+  }
+  .hero-photo .ph-fallback{border:none;}
+  .hero::before{
+    content:""; position:absolute; inset:0; z-index:1;
+    background:
+      radial-gradient(700px 420px at 88% -6%, rgba(226,166,59,.16), transparent 60%);
+      
+    pointer-events:none;
+    
+  }
+  .hero-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(4px);
+    transform: scale(1.04);
+  }
+  .hero .wrap{padding:48px 24px 64px; display:grid; grid-template-columns:1.15fr .85fr; gap:44px; align-items:start; position:relative; z-index:2;}
+  .hero h1{font-size:clamp(32px,4.3vw,52px); color:#fff; line-height:1.08; text-shadow:0 2px 20px rgba(0,0,0,.75);}
+  .hero h1 em{font-style:normal; color:var(--signal);}
+  .hero p.lede{font-size:16.5px; color:#b9c8de; max-width:500px; margin:18px 0 30px;}
+  .hero-actions{display:flex; gap:14px; flex-wrap:wrap;}
+  .hero-stats{display:flex; gap:0; margin-top:44px; border-top:1px solid rgba(255,255,255,.14);}
+  .hero-stats div{padding:16px 26px 0 0; margin-right:26px; border-right:1px solid rgba(255,255,255,.14); flex:none;}
+  .hero-stats div:last-child{border-right:none;}
+  .hero-stats div b{display:block; font-family:'IBM Plex Mono',monospace; font-size:24px; color:var(--signal); font-weight:600;}
+  .hero-stats div span{font-size:11px; color:#8ea0ba; text-transform:uppercase; letter-spacing:.07em; font-family:'IBM Plex Mono',monospace;}
+
+  .spec-card{background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.16); border-radius:4px;}
+  .spec-card .spec-head{padding:15px 18px; border-bottom:1px solid rgba(255,255,255,.14); display:flex; justify-content:space-between; align-items:center;}
+  .spec-card .spec-head b{color:#fff; font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:.06em;}
+  .spec-card .spec-head span{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--signal);}
+  .spec-row{
+    display:flex; align-items:center; justify-content:space-between; padding:13px 18px;
+    border-bottom:1px solid rgba(255,255,255,.08); font-size:13.5px; color:#d3ddeb;
+  }
+  .spec-row:last-child{border-bottom:none;}
+  .spec-row .code{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--signal); background:rgba(226,166,59,.1); padding:3px 8px; border-radius:3px;}
+
+  /* ===== reveal-on-scroll ===== */
+  .reveal{opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease;}
+  .reveal.in{opacity:1; transform:none;}
+
+  /* ===== Sections ===== */
+  section{padding:76px 0;}
+  .section-head{max-width:620px; margin-bottom:44px;}
+  .section-head h2{font-size:clamp(25px,2.8vw,34px);}
+  .section-head p{color:var(--rivet); margin-top:12px; font-size:15px;}
+  .center{text-align:center; margin-left:auto; margin-right:auto;}
+
+  .features-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--hair); border:1px solid var(--hair); border-radius:var(--radius); overflow:hidden;}
+  .feature-card{background:var(--paper); padding:28px 24px;}
+  .feature-card .icon-box{
+    width:38px; height:38px; border:1.5px solid var(--ink); border-radius:4px; color:var(--ink);
+    display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:16px;
+  }
+  .feature-card h4{font-size:16px; margin-bottom:7px;}
+  .feature-card p{font-size:13.8px; color:var(--rivet); margin:0;}
+
+  .director-band{
+    background:var(--ink); color:#fff; border-radius:var(--radius); margin-top:1px;
+    display:flex; align-items:center; padding:20px 24px;
+    border:1px solid var(--hair); gap: 24px; padding: 24px 28px;
+  }
+  .director-photo{
+    width:120px; height:120px; min-width: 120px; border-radius:50%; border:2px solid var(--signal); overflow:hidden;
+    display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:18px; color:var(--signal); flex:none; position:relative;
+  }
+  .director-photo.ph-wrap{width: 120px; height: 120px; min-width: 120px; border-radius: 50%; overflow: hidden; flex: none; margin: 0;}
+  .director-photo .ph-img{
+    width: 100px; height: 100px; object-fit: cover; border-radius: 50%;
+  }
+  .director-photo .ph-fallback{border:none; padding:0; background:var(--ink);}
+  .director-photo .ph-fallback span{display:none;}
+  .director-photo .ph-fallback small{display:none;}
+  .director-band p{margin:0 0 8px; color:#d3ddeb; font-size:14.5px; font-style:italic; max-width:560px;}
+  .director-band b{color:#fff; font-size:14px;}
+  .director-band span.role{color:var(--signal); font-size:12px; font-family:'IBM Plex Mono',monospace;}
+  .director-band .qmark{font-family:'Fraunces',serif; font-size:52px; color:rgba(226,166,59,.35); line-height:1;}
+
+  /* ===== The Span (journey) ===== */
+  .span-section{background:var(--ink); color:#fff;}
+  .span-section .section-head p{color:#9fb0c9;}
+  .span-section .tag{color:var(--signal);}
+  .span-section .tag::before{background:var(--signal);}
+  .span-track{position:relative; padding-top:10px;}
+  .span-track svg{width:100%; display:block;}
+  .span-stops{display:grid; grid-template-columns:repeat(4,1fr); margin-top:-18px;}
+  .span-stop{text-align:center; padding:0 10px;}
+  .span-stop .pin{
+    width:34px; height:34px; border-radius:4px; background:var(--ink); border:2px solid var(--signal); color:var(--signal);
+    display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px;
+  }
+  .span-stop h4{color:#fff; font-size:15.5px; margin-bottom:6px;}
+  .span-stop p{color:#9fb0c9; font-size:13px; margin:0;}
+
+  .schools-strip{background:var(--paper); border-top:1px solid var(--hair); border-bottom:1px solid var(--hair);}
+
+  /* ===== Industries our graduates enter ===== */
+  .industry-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
+  .industry-card{border:1px solid var(--hair); border-radius:var(--radius); padding:18px; background:var(--paper);}
+  .industry-card h5{font-size:13.5px; margin:0 0 10px; display:flex; align-items:center; gap:8px;}
+  .industry-card .icon-box{width:28px; height:28px; border:1.5px solid var(--ink); border-radius:4px; display:flex; align-items:center; justify-content:center; color:var(--ink); font-size:13px;}
+  .industry-tags{display:flex; flex-wrap:wrap; gap:6px;}
+  .industry-tags span{font-size:11px; color:var(--rivet); background:var(--blueline); padding:3px 8px; border-radius:3px;}
+  @media(max-width:1024px){ .industry-grid{grid-template-columns:repeat(2,1fr);} }
+  @media(max-width:680px){ .industry-grid{grid-template-columns:1fr;} }
+  .school-tabs{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:34px;}
+  .school-tab{
+    padding:9px 16px; border-radius:4px; border:1.5px solid var(--hair); font-weight:600; font-size:13px; color:var(--rivet); background:var(--paper);
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .school-tab.active{background:var(--ink); border-color:var(--ink); color:#fff;}
+  .course-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px;}
+  .course-card{
+    border:1px solid var(--hair); border-radius:var(--radius); padding:0; background:var(--parchment);
+    display:flex; flex-direction:column; transition:border-color .15s, transform .15s;
+  }
+  .course-card:hover{border-color:var(--ink); transform:translateY(-2px);}
+  .course-card .ccard-top{display:flex; justify-content:space-between; align-items:center; padding:14px 18px 0;}
+  .course-card .code{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--signal-deep); font-weight:600; letter-spacing:.03em;}
+  .course-card .lvl{font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--rivet); border:1px solid var(--hair); padding:2px 7px; border-radius:3px;}
+  .course-card h4{font-size:16px; margin:12px 18px 4px;}
+  .course-card .dur{font-size:12.5px; color:var(--rivet); margin:0 18px;font-family:'IBM Plex Mono',monospace;}
+  .course-card .row-btn{margin-top:16px; display:flex; justify-content:space-between; align-items:center; padding:12px 18px; border-top:1px solid var(--hair);}
+
+  .facility-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  .facility-card{border-radius:var(--radius); overflow:hidden; border:1px solid var(--hair); background:var(--paper);}
+  .facility-media{height:132px; background:var(--ink); position:relative; display:flex; align-items:center; justify-content:center; color:var(--signal); font-size:28px;}
+  .facility-media .code{position:absolute; top:10px; left:12px; font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:#9fb0c9;}
+  .facility-body{padding:18px 20px;}
+  .facility-body h4{font-size:15.5px; margin-bottom:8px;}
+  .facility-body p{font-size:13.5px; color:var(--rivet); margin:0;}
+
+  /* ===== Real-photo placeholder component =====
+     Usage: <img src="REPLACE-ME-xxx.jpg" class="ph-img" alt="..." onerror="phFallback(this)">
+            <div class="ph-fallback"><span>📷</span><b>Caption</b><small>Recommended size</small></div>
+     Until a real image is dropped in (replacing the src), the fallback shows automatically. */
+  .ph-wrap{position:relative; width:100%; height:100%; overflow:hidden;}
+  .ph-img{width:100%; height:100%; object-fit:cover; display:block;}
+  .ph-fallback{
+    display:none; position:absolute; inset:0; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:4px;
+    background:var(--ink); color:#9fb0c9; padding:14px; border:1px dashed rgba(255,255,255,.25);
+  }
+  .ph-fallback span{font-size:22px;}
+  .ph-fallback b{color:#fff; font-size:12.5px; font-weight:600; max-width:200px;}
+  .ph-fallback small{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--signal);}
+
+  /* ===== Prospectus modal ===== */
+  .modal-overlay{position:fixed; inset:0; background:rgba(8,20,38,.75); z-index:210; display:none; align-items:center; justify-content:center; padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal-box{background:var(--paper); border-radius:8px; max-width:420px; width:100%; padding:30px; position:relative;}
+  .modal-close{position:absolute; top:14px; right:16px; background:none; border:none; font-size:20px; color:var(--rivet); cursor:pointer;}
+
+  /* ===== About family sub-nav ===== */
+  .subnav{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:36px; border-bottom:1px solid var(--hair); padding-bottom:20px;}
+  .subnav a{
+    padding:8px 15px; border-radius:999px; border:1.5px solid var(--hair); font-size:12.5px; font-weight:600; color:var(--rivet);
+  }
+  .subnav a.active{background:var(--ink); border-color:var(--ink); color:#fff;}
+  .subnav a:hover:not(.active){border-color:var(--ink); color:var(--ink);}
+
+  /* ===== Gallery ===== */
+  .gallery-tabs{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:28px;}
+  .gallery-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+  .gallery-tile{position:relative; border-radius:var(--radius); overflow:hidden; border:1px solid var(--hair); aspect-ratio:4/3; cursor:pointer;}
+  .gallery-tile.tall{aspect-ratio:4/5;}
+  .gallery-tile .gtag{position:absolute; top:10px; left:10px; z-index:2; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#fff; background:rgba(0,0,0,.4); padding:3px 8px; border-radius:3px;}
+  @media(max-width:900px){ .gallery-grid{grid-template-columns:1fr 1fr;} }
+  @media(max-width:680px){ .gallery-grid{grid-template-columns:1fr;} }
+
+  /* lightbox */
+  .lightbox{position:fixed; inset:0; background:rgba(8,20,38,.92); z-index:200; display:none; align-items:center; justify-content:center; padding:40px;}
+  .lightbox.open{display:flex;}
+  .lightbox-inner{max-width:800px; width:100%; background:var(--ink); border-radius:8px; overflow:hidden; border:1px solid rgba(255,255,255,.15);}
+  .lightbox-media{aspect-ratio:16/10; position:relative;}
+  .lightbox-caption{padding:16px 20px; color:#dbe4ef; font-size:13.5px; display:flex; justify-content:space-between; align-items:center;}
+  .lightbox-close{position:fixed; top:24px; right:28px; z-index:201; background:none; border:none; color:#fff; font-size:28px; cursor:pointer;}
+
+  /* ===== Guides ===== */
+  .guide-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:18px;}
+  .guide-card{border:1px solid var(--hair); border-radius:var(--radius); overflow:hidden; background:var(--paper);}
+  .guide-media{height:150px; position:relative;}
+  .guide-body{padding:20px;}
+  .guide-tag{font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700; color:var(--signal-deep); text-transform:uppercase; letter-spacing:.05em;}
+  .guide-body h4{font-size:16.5px; margin:8px 0 8px;}
+  .guide-excerpt{font-size:13.5px; color:var(--rivet); margin:0 0 14px;}
+  .guide-full{display:none; font-size:13.5px; color:var(--ink); line-height:1.7; margin:0 0 14px; padding-top:10px; border-top:1px solid var(--hair);}
+  .guide-card.open .guide-full{display:block;}
+  .guide-card.open .guide-excerpt{display:none;}
+  @media(max-width:680px){ .guide-grid{grid-template-columns:1fr;} }
+  .trust-bar{background:var(--ink); border-bottom:3px solid var(--signal);}
+  .trust-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:rgba(255,255,255,.1);}
+  .trust-item{background:var(--ink); padding:22px 22px; display:flex; gap:14px; align-items:flex-start;}
+  .trust-item .icon-box{
+    width:36px; height:36px; border:1.5px solid var(--signal); border-radius:4px; color:var(--signal); flex:none;
+    display:flex; align-items:center; justify-content:center; font-size:16px;
+  }
+  .trust-item h5{color:#fff; font-size:13.5px; font-weight:700; margin:0 0 4px; font-family:'IBM Plex Sans',sans-serif;}
+  .trust-item p{color:#9fb0c9; font-size:12.3px; margin:0; line-height:1.5;}
+  .trust-item .badges{display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;}
+  .trust-item .badges span{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--signal); background:rgba(232,121,46,.12); border:1px solid rgba(232,121,46,.3); padding:2px 7px; border-radius:3px;}
+  @media(max-width:900px){ .trust-grid{grid-template-columns:1fr 1fr;} }
+  @media(max-width:680px){ .trust-grid{grid-template-columns:1fr;} }
+  .intake-banner{background:var(--paper); border-top:1px solid var(--hair); border-bottom:1px solid var(--hair);}
+  .intake-banner .wrap{display:flex; align-items:center; justify-content:space-between; gap:20px; padding:16px 24px; flex-wrap:wrap;}
+  .intake-label{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--rivet);}
+  .intake-label b{color:var(--ink); font-family:'Fraunces',serif; font-weight:600;}
+  .intake-clock{display:flex; gap:10px;}
+  .intake-clock div{text-align:center;}
+  .intake-clock div b{display:block; font-family:'IBM Plex Mono',monospace; font-size:19px; color:var(--ink); background:var(--blueline); border:1px solid var(--hair); border-radius:4px; padding:5px 10px; min-width:44px;}
+  .intake-clock div span{display:block; font-size:9.5px; color:var(--rivet); text-transform:uppercase; letter-spacing:.06em; margin-top:4px; font-family:'IBM Plex Mono',monospace;}
+
+  /* ===== Course explorer bar ===== */
+  .explorer-bar{display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;}
+  .explorer-bar input, .explorer-bar select{
+    padding:10px 13px; border-radius:4px; border:1.5px solid var(--hair); background:var(--paper); font-family:inherit; font-size:13.5px;
+  }
+  .explorer-bar input{flex:1; min-width:200px;}
+  .explorer-bar input:focus, .explorer-bar select:focus{outline:2px solid var(--signal); border-color:var(--signal);}
+  .explorer-count{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--rivet); margin-bottom:18px;}
+
+  /* ===== Campus scroll-strip ===== */
+  .campus-wrap{position:relative;}
+  .campus-strip{
+    display:flex; gap:16px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:6px;
+    scrollbar-width:thin;
+  }
+  .campus-strip .facility-card{flex:0 0 270px; scroll-snap-align:start;}
+  .campus-arrows{display:flex; gap:8px; justify-content:flex-end; margin-bottom:14px;}
+  .campus-arrow{
+    width:36px; height:36px; border-radius:4px; border:1.5px solid var(--hair); background:var(--paper); color:var(--ink);
+    display:flex; align-items:center; justify-content:center; font-size:14px;
+  }
+  .campus-arrow:hover{border-color:var(--ink);}
+  .campus-dots{display:flex; gap:6px; justify-content:center; margin-top:16px;}
+  .campus-dot{width:7px; height:7px; border-radius:50%; background:var(--hair); transition:background .2s, width .2s;}
+  .campus-dot.active{background:var(--signal); width:20px; border-radius:4px;}
+
+  /* ===== Fee calculator ===== */
+  .calc-card{background:var(--ink); color:#fff; border-radius:var(--radius); padding:28px; border:1px solid var(--hair); margin-bottom:34px;}
+  .calc-card .tag{color:var(--signal);}
+  .calc-card .tag::before{background:var(--signal);}
+  .calc-card h3{color:#fff; font-size:19px; margin-bottom:4px;}
+  .calc-card p.sub{color:#9fb0c9; font-size:13.5px; margin:0 0 20px;}
+  .calc-row{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px;}
+  .calc-row select{
+    width:100%; padding:11px 13px; border-radius:4px; border:1.5px solid rgba(255,255,255,.2); background:rgba(255,255,255,.05); color:#fff; font-family:inherit; font-size:14px;
+  }
+  .calc-row select:focus{outline:2px solid var(--signal);}
+  .calc-row select option{ color:var(--ink); background:#fff; }
+  .calc-result{background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.14); border-radius:4px; padding:18px 20px; display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  .calc-result div span{display:block; font-size:10.5px; color:#9fb0c9; text-transform:uppercase; letter-spacing:.05em; font-family:'IBM Plex Mono',monospace; margin-bottom:4px;}
+  .calc-result div b{font-family:'IBM Plex Mono',monospace; font-size:16px; color:var(--signal);}
+  @media(max-width:680px){ .calc-row{grid-template-columns:1fr;} .calc-result{grid-template-columns:1fr;} }
+
+  /* ===== Testimonials ===== */
+  .testi-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  .testi-card{background:var(--paper); border:1px solid var(--hair); border-radius:var(--radius); padding:24px; display:flex; flex-direction:column;}
+  .testi-card .qmark{font-family:'Fraunces',serif; font-size:36px; color:var(--signal); line-height:1; margin-bottom:8px;}
+  .testi-card p.quote{font-size:14px; color:var(--ink); font-style:italic; flex:1; margin:0 0 16px;}
+  .testi-card .testi-who{display:flex; align-items:center; gap:10px; border-top:1px solid var(--hair); padding-top:14px;}
+  .testi-avatar{width:36px; height:36px; border-radius:4px; background:var(--ink); color:var(--signal); font-family:'IBM Plex Mono',monospace; font-size:13px; display:flex; align-items:center; justify-content:center; flex:none;}
+  .testi-who b{display:block; font-size:13px;}
+  .testi-who span{display:block; font-size:11.5px; color:var(--rivet); font-family:'IBM Plex Mono',monospace;}
+  .testi-card.placeholder{border-style:dashed; background:var(--blueline);}
+  .testi-card.placeholder p.quote{color:var(--rivet);}
+
+  /* ===== FAQ accordion ===== */
+  .faq-list{border:1px solid var(--hair); border-radius:var(--radius); overflow:hidden; background:var(--paper); margin-bottom:34px;}
+  .faq-item{border-bottom:1px solid var(--hair);}
+  .faq-item:last-child{border-bottom:none;}
+  .faq-q{
+    display:flex; justify-content:space-between; align-items:center; padding:17px 20px; cursor:pointer; font-weight:600; font-size:14.5px;
+  }
+  .faq-q .plus{font-family:'IBM Plex Mono',monospace; color:var(--signal-deep); font-size:18px; transition:transform .2s;}
+  .faq-item.open .faq-q .plus{transform:rotate(45deg);}
+  .faq-a{max-height:0; overflow:hidden; transition:max-height .25s ease;}
+  .faq-item.open .faq-a{max-height:200px;}
+  .faq-a p{padding:0 20px 18px; margin:0; font-size:13.8px; color:var(--rivet);}
+  @media(max-width:900px){ .testi-grid{grid-template-columns:1fr 1fr;} }
+  @media(max-width:680px){ .testi-grid{grid-template-columns:1fr;} }
+
+  .news-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  .news-card{background:var(--paper); border:1px solid var(--hair); border-left:3px solid var(--signal); border-radius:var(--radius); padding:20px;}
+  .news-tag{font-size:10.5px; font-weight:700; color:var(--signal-deep); text-transform:uppercase; letter-spacing:.05em; font-family:'IBM Plex Mono',monospace;}
+  .news-card h4{font-size:15px; margin:9px 0 6px;}
+  .news-card p{font-size:13.3px; color:var(--rivet); margin:0;}
+  .news-empty{color:var(--rivet); font-size:14px; padding:30px; text-align:center; border:1px dashed var(--hair); border-radius:var(--radius);}
+
+  .cta-band{
+    background:var(--ink); border-radius:var(--radius); color:#fff;
+    padding:44px 38px; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;
+    border:1px solid var(--hair); position:relative; overflow:hidden;
+  }
+  .cta-band::after{content:""; position:absolute; right:-40px; top:-40px; width:180px; height:180px; border:1.5px solid rgba(226,166,59,.25); border-radius:50%;}
+  .cta-band h3{color:#fff; font-size:24px; margin-bottom:8px;}
+  .cta-band p{color:#b9c8de; margin:0; font-size:14px;}
+
+  footer{background:var(--ink); color:#96a8c2; padding:56px 0 22px;}
+  .footer-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr 1.2fr; gap:32px;}
+  footer h5{color:#fff; font-size:12.5px; margin-bottom:16px; letter-spacing:.08em; text-transform:uppercase; font-family:'IBM Plex Mono',monospace; font-weight:500;}
+  footer p, footer li, footer a{font-size:13.3px; color:#96a8c2;}
+  footer ul{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:9px;}
+  footer a:hover{color:#fff;}
+  .foot-bottom{border-top:1px solid rgba(255,255,255,.1); margin-top:36px; padding-top:18px; display:flex; justify-content:space-between; font-size:12px; flex-wrap:wrap; gap:10px; font-family:'IBM Plex Mono',monospace; color:#748199;}
+
+  /* ===== Portal / Admin shared chrome ===== */
+  .app-shell{min-height:70vh; padding:44px 0 90px;}
+  .panel{background:var(--paper); border:1px solid var(--hair); border-radius:var(--radius);}
+  .auth-box{max-width:410px; margin:40px auto; padding:34px; text-align:center;}
+  .auth-box .brand-mark{margin:0 auto 16px; border-color:var(--ink); color:var(--ink);}
+  .auth-box h2{font-size:21px; margin-bottom:6px;}
+  .auth-box p.sub{color:var(--rivet); font-size:13.5px; margin-bottom:22px;}
+  .field{text-align:left; margin-bottom:14px;}
+  .field label{display:block; font-size:11.5px; font-weight:600; color:var(--rivet); margin-bottom:6px; font-family:'IBM Plex Mono',monospace; letter-spacing:.02em;}
+  .field input, .field select, .field textarea{
+    width:100%; padding:11px 13px; border-radius:4px; border:1.5px solid var(--hair); font-family:inherit; font-size:14px; background:#fff;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{outline:2px solid var(--signal); outline-offset:1px; border-color:var(--signal);}
+  .msg{font-size:13px; padding:9px 12px; border-radius:4px; margin-bottom:12px; font-family:'IBM Plex Mono',monospace;}
+  .msg.err{background:#F7E7E2; color:var(--danger);}
+  .msg.ok{background:#E4F0E9; color:var(--ok);}
+  .hint{font-size:12px; color:var(--rivet); margin-top:14px;}
+
+  .dash-topbar{display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; flex-wrap:wrap; gap:14px;}
+  .dash-topbar h2{font-size:23px;}
+  .dash-grid{display:grid; grid-template-columns:2fr 1fr; gap:20px;}
+  .stat-row{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; margin-bottom:20px; background:var(--hair); border:1px solid var(--hair); border-radius:var(--radius); overflow:hidden;}
+  .stat-card{padding:18px 20px; background:var(--paper);}
+  .stat-card b{font-family:'IBM Plex Mono',monospace; font-size:22px; color:var(--ink); font-weight:600;}
+  .stat-card span{display:block; font-size:11px; color:var(--rivet); margin-top:4px; text-transform:uppercase; letter-spacing:.05em; font-family:'IBM Plex Mono',monospace;}
+  .list-item{display:flex; justify-content:space-between; align-items:center; padding:13px 0; border-bottom:1px solid var(--hair);}
+  .list-item:last-child{border-bottom:none;}
+  .badge{font-size:10.5px; font-weight:700; padding:4px 9px; border-radius:3px; background:var(--blueline); color:var(--ink); font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:.03em;}
+  .badge.gold{background:#F5E6C8; color:var(--signal-deep);}
+  table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  th{text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--rivet); padding:10px 12px; border-bottom:2px solid var(--hair); font-family:'IBM Plex Mono',monospace;}
+  td{padding:12px; border-bottom:1px solid var(--hair);}
+  .icon-btn{background:none; border:none; color:var(--rivet); font-size:12.5px; padding:5px 9px; border-radius:4px; font-family:'IBM Plex Mono',monospace;}
+  .icon-btn:hover{background:var(--blueline); color:var(--ink);}
+  .icon-btn.danger:hover{background:#F7E7E2; color:var(--danger);}
+
+  [data-view]{display:none;}
+  [data-view].active{display:block;}
+  .page{display:none;}
+  .page.active{display:block;}
+
+  @media(max-width:1024px){
+    .features-grid,.facility-grid,.news-grid{grid-template-columns:1fr 1fr;}
+    .span-stops{grid-template-columns:repeat(2,1fr); row-gap:26px;}
+  }
+  @media(max-width:900px){
+    .hero .wrap{grid-template-columns:1fr; padding-bottom:56px;}
+    .footer-grid{grid-template-columns:1fr 1fr;}
+    .dash-grid{grid-template-columns:1fr;}
+  }
+  @media(max-width:680px){
+    nav.main-nav{display:none;}
+    .hamburger{display:inline-block;}
+    .nav-cta .btn-line{display:none;}
+    .mobile-only-link{display:block;}
+    .brand-text b{font-size:14.5px;}
+    .brand-text span{font-size:9px;}
+    .features-grid,.facility-grid,.news-grid,.footer-grid,.stat-row{grid-template-columns:1fr;}
+    .director-band{grid-template-columns:1fr; text-align:center;}
+    .director-photo{margin:0 auto;}
+    .director-band .qmark{display:none;}
+    .cta-band{flex-direction:column; text-align:center;}
+    .span-stops{grid-template-columns:1fr;}
+    .hero-stats{flex-wrap:wrap;}
+    .topbar .wrap{flex-direction:column; align-items:flex-start;}
+  }
+  nav.main-nav.mobile-open{
+    display:flex; flex-direction:column; position:absolute; top:100%; left:0; right:0; background:var(--ink);
+    padding:10px 24px 18px; border-top:1px solid rgba(255,255,255,.1);
+  }
+</style>
+<!-- Backend: Supabase client library. Loads fine once this file is hosted
+     for real (Netlify, etc). It may be blocked inside Claude's own preview
+     sandbox — that's expected; the site falls back to demo mode below
+     whenever this library or the config isn't available. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+</head>
+<body>
+
+<!-- SVG ICON SPRITE -->
+<svg style="display:none">
+  <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5 L10 14 L9.5 10.5 Z"/></symbol>
+  <symbol id="i-mentor" viewBox="0 0 24 24"><path d="M4 19c0-3 3-5 8-5s8 2 8 5"/><circle cx="12" cy="8" r="3.5"/></symbol>
+  <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="11" rx="1.5"/><path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/></symbol>
+  <symbol id="i-path" viewBox="0 0 24 24"><path d="M4 18c4 0 3-6 7-6s3 6 7 6"/><path d="M15 15l3 3-3 3"/></symbol>
+  <symbol id="i-coins" viewBox="0 0 24 24"><ellipse cx="9" cy="7" rx="6" ry="3"/><path d="M3 7v5c0 1.7 2.7 3 6 3s6-1.3 6-3V7"/><path d="M9 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18"/><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="1.5"/><path d="M8 7l1.5-3h5L16 7"/><circle cx="12" cy="13.5" r="3.5"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1"/><path d="M8 20h8M12 16v4"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="6" width="12" height="12" rx="1"/><path d="M15 10l6-3v10l-6-3z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6.5 7-11a7 7 0 1 0-14 0c0 4.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.3"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l1.5 4.5L8 10.5a12 12 0 0 0 5.5 5.5l2-2.5L20 15v4c0 1-1 1.5-2 1.4C10.5 19.7 4.3 13.5 3.6 6c-.1-1 .4-2 1.4-2z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3 6l9 7 9-7"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16M14 6l6 6-6 6"/></symbol>
+</svg>
+
+<!-- ================= PUBLIC SITE ================= -->
+<div data-view="site" class="active">
+
+  <header class="site-header" id="siteHeader">
+    <div class="wrap nav-row">
+      <a href="#home" class="brand" onclick="go('home')">
+         <div class="brand-mark">
+          <img src="logo8.png" class="logo-img" alt="NextBridge Institute logo">
+        </div>
+        <div class="brand-text">
+          <b>NextBridge Institute</b>
+          <span>Kiserian Campus</span>
+        </div>
+      </a>
+      <nav class="main-nav" id="mainNav">
+        <a class="navlink active" onclick="go('home')">Home</a>
+        <div class="nav-item" id="aboutNavItem">
+          <a class="navlink" onclick="toggleDropdown(event,'aboutNavItem')">About <svg viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
+          <div class="nav-dropdown">
+            <a onclick="closeDropdowns(); go('about')">About NextBridge</a>
+            <a onclick="closeDropdowns(); go('accreditation')">Accreditation &amp; Recognition</a>
+            <a onclick="closeDropdowns(); go('academic-pathway')">Academic Pathway</a>
+            <a onclick="closeDropdowns(); go('impact')">Our Impact</a>
+            <a onclick="closeDropdowns(); go('alumni')">Our Alumni</a>
+          </div>
+        </div>
+        <div class="nav-item" id="schoolsNavItem">
+          <a class="navlink" onclick="toggleDropdown(event,'schoolsNavItem')">Schools <svg viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
+          <div class="nav-dropdown" id="schoolsDropdown"></div>
+        </div>
+        <div class="nav-item" id="studentNavItem">
+          <a class="navlink" onclick="toggleDropdown(event,'studentNavItem')">Student Life <svg viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
+          <div class="nav-dropdown">
+            <a onclick="closeDropdowns(); go('showcase')">Student Showcase</a>
+            <a onclick="closeDropdowns(); go('gallery')">Gallery</a>
+            <a onclick="closeDropdowns(); go('accommodation')">Accommodation</a>
+          </div>
+        </div>
+        <div class="nav-item" id="resourcesNavItem">
+          <a class="navlink" onclick="toggleDropdown(event,'resourcesNavItem')">Resources <svg viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
+          <div class="nav-dropdown">
+            <a onclick="closeDropdowns(); go('facilities')">Facilities</a>
+            <a onclick="closeDropdowns(); go('news')">News Desk</a>
+            <a onclick="closeDropdowns(); go('guides')">Guides</a>
+          </div>
+        </div>
+        <a class="navlink" onclick="go('contact')">Contact</a>
+        <a class="navlink mobile-only-link" onclick="switchApp('portal')">Student Portal</a>
+      </nav>
+      <div class="nav-cta">
+        <a class="btn btn-line btn-sm" onclick="switchApp('portal')">Student Portal</a>
+        <a class="btn btn-signal btn-sm" onclick="go('admissions')">Apply Now</a>
+        <button class="hamburger" onclick="toggleMobileNav()" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HOME -->
+  <div data-page="home" class="page active">
+    <section class="hero" style="padding-bottom:0;">
+      <div class="hero-photo">
+        <img src="next1.jpg" class="ph-img" alt="NextBridge Institute Campus">
+      </div>
+      <div class="wrap">
+        <div>
+          <div class="tag" style="color:var(--signal);">Kiserian Campus &mdash; Part-Time &amp; Online Classes Available</div>
+          <h1>Bridging <em>Potential</em> to Profession.</h1>
+          <p class="lede">"We don't just teach , we bridge your potential to profession." Practical training across ICT, media, business, accountancy, beauty, hospitality, engineering and plumbing.</p>
+          <div class="hero-actions">
+            <a class="btn btn-signal" onclick="go('admissions')">Apply Now <svg class="icon"><use href="#i-arrow"/></svg></a>
+            <a class="btn btn-line" onclick="go('schools')">Explore Programs</a>
+            <a class="btn btn-line" onclick="openProspectusModal()">Request Prospectus</a>
+          </div>
+          <p style="margin-top:14px;"><a href="https://wa.me/254725040404?text=Hello%20NextBridge%20Institute%2C%20I%20would%20like%20to%20inquire%20about%20your%20courses%20and%20admissions" target="_blank" style="color:#9fb0c9; font-size:13px; text-decoration:underline;">Or chat with admissions on WhatsApp →</a></p>
+          <div class="hero-stats">
+            <div><b id="heroSchoolCount">08</b><span>Schools</span></div>
+            <div><b id="heroCourseCount">50+</b><span>Programs</span></div>
+            <div><b>1000+</b><span>Trained</span></div>
+          </div>
+        </div>
+        <div class="spec-card">
+          <div class="spec-head"><b>Schools At a Glance</b><span>2026 INTAKE</span></div>
+          <div id="heroSpecRows"></div>
+        </div>
+      </div>
+      <div class="truss-wrap">
+        <svg viewBox="0 0 1200 46" preserveAspectRatio="none" style="width:100%; height:46px; display:block;">
+          <path class="truss-path" d="M0,44 L60,4 L120,44 L180,4 L240,44 L300,4 L360,44 L420,4 L480,44 L540,4 L600,44 L660,4 L720,44 L780,4 L840,44 L900,4 L960,44 L1020,4 L1080,44 L1140,4 L1200,44" fill="none" stroke="#E8792E" stroke-width="1.5" opacity="0.55"/>
+        </svg>
+      </div>
+    </section>
+
+    <div class="trust-bar">
+      <div class="trust-grid">
+        <div class="trust-item">
+          <div class="icon-box"><svg class="icon"><use href="#i-compass"/></svg></div>
+          <div>
+            <h5>Accredited Programs</h5>
+            <p>Recognised examining bodies:</p>
+            <div class="badges" id="accreditationBadges"></div>
+            <a onclick="go('accreditation')" style="display:inline-block; margin-top:8px; font-size:11.5px; color:var(--signal); font-family:'IBM Plex Mono',monospace; text-decoration:underline; cursor:pointer;">Learn more about accreditation →</a>
+          </div>
+        </div>
+        <div class="trust-item">
+          <div class="icon-box"><svg class="icon"><use href="#i-coins"/></svg></div>
+          <div><h5>Flexible Payment Plans</h5><p>Pay per semester with instalment options —     no hidden costs.</p></div>
+        </div>
+        <div class="trust-item">
+          <div class="icon-box"><svg class="icon"><use href="#i-monitor"/></svg></div>
+          <div><h5>Part-Time &amp; Online Classes</h5><p>Hybrid learning — study in-studio, part-time, or fully online.</p></div>
+        </div>
+        <div class="trust-item">
+          <div class="icon-box"><svg class="icon"><use href="#i-briefcase"/></svg></div>
+          <div><h5>Industry-Ready Training</h5><p>Hands-on studios and labs built around real employer needs.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="intake-banner">
+      <div class="wrap">
+        <div class="intake-label">🕒 <span><b>2026 Intake</b> — applications close in:</span></div>
+        <div class="intake-clock" id="intakeClock">
+          <div><b id="ctD">--</b><span>Days</span></div>
+          <div><b id="ctH">--</b><span>Hrs</span></div>
+          <div><b id="ctM">--</b><span>Min</span></div>
+          <div><b id="ctS">--</b><span>Sec</span></div>
+        </div>
+        <a class="btn btn-ink btn-sm" onclick="go('admissions')">Apply Before It Closes</a>
+      </div>
+    </div>
+
+    <section>
+      <div class="wrap">
+        <div class="section-head center reveal">
+          <div class="tag">The NextBridge Advantage</div>
+          <h2>Built for the job market, not just the classroom.</h2>
+          <p>We go beyond teaching — we shape futures. Students choose us because we combine quality education with practical skills that prepare them for real-world opportunities.</p>
+        </div>
+        <div class="features-grid reveal">
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-compass"/></svg></div><h4>Hands-On Learning</h4><p>Practical, studio and lab-based training from day one — not just theory.</p></div>
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-mentor"/></svg></div><h4>Experienced Faculty</h4><p>Mentorship from instructors with real industry backgrounds.</p></div>
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-briefcase"/></svg></div><h4>Industry-Focused Training</h4><p>Curricula built around what employers are actually hiring for.</p></div>
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-path"/></svg></div><h4>Clear Career Pathway</h4><p>Straight progression from certificate to diploma to employment.</p></div>
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-coins"/></svg></div><h4>Affordability &amp; Access</h4><p>Flexible fee structures so quality training is within reach.</p></div>
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-building"/></svg></div><h4>Modern Environment</h4><p>Spacious classrooms, fast internet, and creative studio space.</p></div>
+        </div>
+        <div class="director-band reveal">
+          <!-- IMAGE: Portrait of Mrs. Judith, Director, square 300x300 -->
+          <div class="director-photo ph-wrap"><img src="director1.jpg"  class="ph-img" alt="Mrs. Judith, Director" onerror="phFallback(this)"><div class="ph-fallback">MJ</div></div>
+          <div>
+            <p>"We built NextBridge to close the gap between classroom theory and what the job market actually demands, every course here is designed backward from a real career outcome."</p>
+            <b>Mrs. Judith</b> &nbsp;<span class="role">DIRECTOR</span>
+          </div>
+          
+        </div>
+      </div>
+    </section>
+
+    <section style="padding-top:0;">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="tag">In Their Words</div>
+          <h2>What our graduates say.</h2>
+          <p>Real feedback from NextBridge students — updated by our team as new graduates come through.</p>
+        </div>
+        <div id="testiGrid" class="testi-grid reveal"></div>
+      </div>
+    </section>
+
+    <section class="span-section">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="tag">The Span</div>
+          <h2>Four stops from application to career.</h2>
+          <p>Every student crosses the same span — here's exactly where it leads.</p>
+        </div>
+        <div class="span-track reveal">
+          <svg viewBox="0 0 1200 70" preserveAspectRatio="none">
+            <path d="M0,55 L150,55 L200,15 L250,55 L400,55 L450,15 L500,55 L700,55 L750,15 L800,55 L950,55 L1000,15 L1050,55 L1200,55" fill="none" stroke="#2C4A72" stroke-width="2"/>
+            <path class="truss-path" d="M0,55 L1200,55" fill="none" stroke="#E2A63B" stroke-width="2.5"/>
+          </svg>
+          <div class="span-stops">
+            <div class="span-stop"><div class="pin">01</div><h4>Apply</h4><p>Submit your application &amp; pick a school.</p></div>
+            <div class="span-stop"><div class="pin">02</div><h4>Train</h4><p>Hands-on studio &amp; lab-based coursework.</p></div>
+            <div class="span-stop"><div class="pin">03</div><h4>Graduate</h4><p>Certificate or diploma, portfolio in hand.</p></div>
+            <div class="span-stop"><div class="pin">04</div><h4>Career</h4><p>Placement support into the job market.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="tag">Where Graduates Land</div>
+          <h2>Industries our graduates enter.</h2>
+          <p>Every school is built around a real destination, not just a certificate. <a onclick="go('showcase')" style="color:var(--signal-deep); text-decoration:underline; cursor:pointer;">See what our students create →</a></p>
+        </div>
+        <div class="industry-grid reveal">
+          <div class="industry-card"><h5><span class="icon-box"><svg class="icon"><use href="#i-monitor"/></svg></span>ICT</h5><div class="industry-tags"><span>Software & Tech Firms</span><span>Cyber Security</span><span>Digital Agencies</span><span>Remote/Freelance Tech</span></div></div>
+          <div class="industry-card"><h5><span class="icon-box"><svg class="icon"><use href="#i-video"/></svg></span>Media</h5><div class="industry-tags"><span>Film & TV Production</span><span>Broadcasting</span><span>Content Creation</span><span>Photography Studios</span></div></div>
+          <div class="industry-card"><h5><span class="icon-box"><svg class="icon"><use href="#i-briefcase"/></svg></span>Business</h5><div class="industry-tags"><span>Corporate Offices</span><span>Banks & SACCOs</span><span>NGOs</span><span>Supply Chain & Retail</span></div></div>
+          <div class="industry-card"><h5><span class="icon-box"><svg class="icon"><use href="#i-coins"/></svg></span>Accountancy</h5><div class="industry-tags"><span>Accounting Firms</span><span>Corporate Finance</span><span>Audit Firms</span></div></div>
+          <div class="industry-card"><h5><span class="icon-box"><svg class="icon"><use href="#i-mentor"/></svg></span>Beauty & Cosmetology</h5><div class="industry-tags"><span>Salons & Spas</span><span>Freelance Beauty</span><span>Fashion & Events</span></div></div>
+          <div class="industry-card"><h5><span class="icon-box"><svg class="icon"><use href="#i-building"/></svg></span>Hospitality</h5><div class="industry-tags"><span>Hotels & Restaurants</span><span>Event Management</span><span>Tourism</span></div></div>
+          <div class="industry-card"><h5><span class="icon-box"><svg class="icon"><use href="#i-compass"/></svg></span>Engineering</h5><div class="industry-tags"><span>Construction</span><span>Manufacturing</span><span>Utilities</span></div></div>
+          <div class="industry-card"><h5><span class="icon-box"><svg class="icon"><use href="#i-path"/></svg></span>Plumbing</h5><div class="industry-tags"><span>Construction & Real Estate</span><span>Facilities Maintenance</span><span>Self-Employment</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="schools-strip">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="tag">Our Courses</div>
+          <h2>Diploma, certificate &amp; short courses.</h2>
+          <p>Programs in ICT, media, business, accountancy, beauty, hospitality, engineering and plumbing — each blending theory with hands-on training.</p>
+        </div>
+        <div id="homeCourseGrid" class="course-grid reveal"></div>
+        <div style="text-align:center; margin-top:30px;">
+          <a class="btn btn-ink" onclick="go('schools')">View All Schools <svg class="icon"><use href="#i-arrow"/></svg></a>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding-bottom:0;">
+      <div class="wrap">
+        <div class="section-head center reveal">
+          <div class="tag">Before You Apply</div>
+          <h2>Everything you need to know.</h2>
+          <p>Three quick stops before you commit — no admissions call required.</p>
+        </div>
+        <div class="features-grid reveal">
+          <div class="feature-card" style="cursor:pointer;" onclick="go('guides')"><div class="icon-box"><svg class="icon"><use href="#i-path"/></svg></div><h4>Guides</h4><p>How to choose a program, what to expect, and how payment plans work.</p></div>
+          <div class="feature-card" style="cursor:pointer;" onclick="go('admissions')"><div class="icon-box"><svg class="icon"><use href="#i-compass"/></svg></div><h4>FAQs</h4><p>Documents needed, transfers, recognition, and checking your application status.</p></div>
+          <div class="feature-card" style="cursor:pointer;" onclick="go('gallery')"><div class="icon-box"><svg class="icon"><use href="#i-camera"/></svg></div><h4>Gallery</h4><p>See the campus, studios, and student work before you enrol.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="cta-band reveal">
+          <div>
+            <h3>Admissions are open — apply today.</h3>
+            <p>Secure your place for the next intake. Talk to our admissions team or start your application now.</p>
+          </div>
+          <div style="display:flex; gap:12px; flex-wrap:wrap; position:relative; z-index:1;">
+            <a class="btn btn-signal" onclick="go('admissions')">Start Application</a>
+            <a class="btn btn-line" href="https://wa.me/254725040404" target="_blank">WhatsApp Us</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ABOUT -->
+  <div data-page="about" class="page">
+    <section style="padding-top:46px;">
+      <div class="wrap">
+        <div class="subnav">
+          <a class="active" onclick="go('about')">About NextBridge</a>
+          <a onclick="go('accreditation')">Accreditation &amp; Recognition</a>
+          <a onclick="go('academic-pathway')">Academic Pathway</a>
+          <a onclick="go('impact')">Our Impact</a>
+          <a onclick="go('alumni')">Our Alumni</a>
+        </div>
+        <div class="section-head">
+          <div class="tag">About NextBridge</div>
+          <h2>A bridge between classrooms and careers.</h2>
+          <p>NextBridge Institute of Professional Studies (Kiserian Campus) is based at Nannet Plaza, 1st Floor (Kwa Maji), Kiserian. We train students across ICT, media, business, accountancy, beauty &amp; cosmetology, hospitality, engineering and plumbing — combining theory with hands-on studio and lab work so graduates walk into the job market with real, demonstrable skill.</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-path"/></svg></div><h4>Our Mission</h4><p>To equip every student with practical, market-ready skills through mentorship and hands-on training.</p></div>
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-compass"/></svg></div><h4>Our Vision</h4><p>To be the region's leading bridge between professional training and real career opportunity.</p></div>
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-building"/></svg></div><h4>Our Values</h4><p>Practical excellence, mentorship, affordability, and integrity in everything we teach.</p></div>
+        </div>
+        <div class="director-band">
+          <!-- IMAGE: Portrait of Mrs. Judith, Director, square 300x300 -->
+          <div class="director-photo ph-wrap"><img src="director1.jpg" class="ph-img" alt="Mrs. Judith, Director" onerror="phFallback(this)"><div class="ph-fallback">MJ</div></div>
+          <div><p>"Bridging Potential to Profession isn't just our tagline - it's our teaching philosophy."</p><b>Mrs. Judith</b> &nbsp;<span class="role">DIRECTOR</span></div>
+          
+        </div>
+        <div class="section-head" style="margin-top:56px;">
+          <div class="tag">Faculty</div>
+          <h2>Meet a few of our mentors.</h2>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-monitor"/></svg></div><h4>Mr. Elly Oyuolo</h4><p>School of ICT — Software Development &amp; Cyber Security.</p></div>
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-mentor"/></svg></div><h4>Miss Mercy Chirchir</h4><p>School of Beauty &amp; Cosmetology — Beauty Therapy.</p></div>
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-video"/></svg></div><h4>Miss Maggy</h4><p>School of Media — Videography &amp; Journalism.</p></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ACCREDITATION & RECOGNITION -->
+  <div data-page="accreditation" class="page">
+    <section style="padding-top:46px;">
+      <div class="wrap">
+        <div class="subnav">
+          <a onclick="go('about')">About NextBridge</a>
+          <a class="active" onclick="go('accreditation')">Accreditation &amp; Recognition</a>
+          <a onclick="go('academic-pathway')">Academic Pathway</a>
+          <a onclick="go('impact')">Our Impact</a>
+          <a onclick="go('alumni')">Our Alumni</a>
+        </div>
+        <div class="section-head">
+          <div class="tag">Accreditation &amp; Recognition</div>
+          <h2>Who examines and recognises our programs.</h2>
+          <p>Every course sits under a recognised examining body. Here's what each one actually does.</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-compass"/></svg></div><h4>CDACC</h4><p>The Curriculum Development, Assessment and Certification Council — Kenya's TVET body responsible for developing and certifying competency-based curricula.</p></div>
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-briefcase"/></svg></div><h4>KNEC</h4><p>The Kenya National Examinations Council — conducts national examinations, including certificate and diploma-level TVET assessments.</p></div>
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-coins"/></svg></div><h4>KASNEB</h4><p>The Kenya Accountants and Secretaries National Examinations Board — the examining body for CPA, ATD and related accountancy and finance qualifications.</p></div>
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-mentor"/></svg></div><h4>ICM</h4><p>The Institute of Commercial Management — an international awarding body for business, management and administrative qualifications.</p></div>
+        </div>
+        <div class="panel" style="padding:22px 26px; margin-top:10px; border-left:3px solid var(--signal);">
+          <p style="margin:0; font-size:13.5px; color:var(--rivet);">Currently active in our course catalogue: <span id="accreditationFull" style="color:var(--ink); font-weight:600;"></span>. This list updates automatically as courses change.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ACADEMIC PATHWAY -->
+  <div data-page="academic-pathway" class="page">
+    <section style="padding-top:46px;">
+      <div class="wrap">
+        <div class="subnav">
+          <a onclick="go('about')">About NextBridge</a>
+          <a onclick="go('accreditation')">Accreditation &amp; Recognition</a>
+          <a class="active" onclick="go('academic-pathway')">Academic Pathway</a>
+          <a onclick="go('impact')">Our Impact</a>
+          <a onclick="go('alumni')">Our Alumni</a>
+        </div>
+        <div class="section-head">
+          <div class="tag">Academic Pathway</div>
+          <h2>How programs are structured.</h2>
+          <p>Most schools follow the same three-tier structure, so you can start small and build up — or dive straight into a diploma.</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-arrow"/></svg></div><h4>1. Short Course</h4><p>1–3 months, open entry. Fastest way to test a skill or add one specific capability (e.g. Cinematography Basics, Computer Packages).</p></div>
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-path"/></svg></div><h4>2. Certificate</h4><p>Usually 1 year or 3–9 months depending on school. Entry grades typically D Plain to D-. A recognised, employable qualification on its own.</p></div>
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-compass"/></svg></div><h4>3. Diploma</h4><p>Typically 2 years. Higher entry grade (often C-), the most comprehensive qualification, and the strongest platform for further study or promotion.</p></div>
+        </div>
+        <p style="font-size:13.5px; color:var(--rivet); margin-top:10px;">Exact entry grades and durations vary by course — see each school's course list for specifics, or use the fee &amp; program calculator on the Admissions page.</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- OUR IMPACT -->
+  <div data-page="impact" class="page">
+    <section style="padding-top:46px;">
+      <div class="wrap">
+        <div class="subnav">
+          <a onclick="go('about')">About NextBridge</a>
+          <a onclick="go('accreditation')">Accreditation &amp; Recognition</a>
+          <a onclick="go('academic-pathway')">Academic Pathway</a>
+          <a class="active" onclick="go('impact')">Our Impact</a>
+          <a onclick="go('alumni')">Our Alumni</a>
+        </div>
+        <div class="section-head">
+          <div class="tag">Our Impact</div>
+          <h2>NextBridge, by the numbers.</h2>
+          <p>The school and program counts below are real and update automatically as our catalogue grows. Outcome metrics are marked "to confirm" until the client provides verified figures.</p>
+        </div>
+        <div class="stat-row" style="grid-template-columns:repeat(4,1fr);">
+          <div class="stat-card"><b id="impactSchools">08</b><span>Schools</span></div>
+          <div class="stat-card"><b id="impactCourses">—</b><span>Active Programs</span></div>
+          <div class="stat-card"><b>To confirm</b><span>Graduate Employment Rate</span></div>
+          <div class="stat-card"><b>To confirm</b><span>Years Operating</span></div>
+        </div>
+        <p style="font-size:13.5px; color:var(--rivet); margin-top:18px;">Once the client shares verified placement, employment, or graduate-count data, these cards are easy to update — either directly in code or via a future admin-editable field.</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- OUR ALUMNI -->
+  <div data-page="alumni" class="page">
+    <section style="padding-top:46px;">
+      <div class="wrap">
+        <div class="subnav">
+          <a onclick="go('about')">About NextBridge</a>
+          <a onclick="go('accreditation')">Accreditation &amp; Recognition</a>
+          <a onclick="go('academic-pathway')">Academic Pathway</a>
+          <a onclick="go('impact')">Our Impact</a>
+          <a class="active" onclick="go('alumni')">Our Alumni</a>
+        </div>
+        <div class="section-head">
+          <div class="tag">Our Alumni</div>
+          <h2>Graduate spotlights.</h2>
+          <p></p>
+        </div>
+        <div class="testi-grid" id="alumniGrid"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- SCHOOLS -->
+  <div data-page="schools" class="page">
+    <section style="padding-top:46px;">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="tag">Schools</div>
+          <h2>Find your program.</h2>
+          <p>Browse by school. Courses added by our admissions office appear here automatically.</p>
+        </div>
+        <div class="explorer-bar">
+          <input type="text" id="explorerSearch" placeholder="Search courses — e.g. cyber security, videography..." oninput="onExplorerChange()">
+          <select id="explorerLevel" onchange="onExplorerChange()">
+            <option value="">All levels</option>
+            <option>Diploma</option>
+            <option>Certificate</option>
+            <option>Short Course</option>
+          </select>
+        </div>
+        <div class="school-tabs" id="schoolTabs"></div>
+        <div class="explorer-count" id="explorerCount"></div>
+        <div id="schoolCourseGrid" class="course-grid"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- FACILITIES -->
+  <div data-page="facilities" class="page">
+    <section style="padding-top:46px;">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="tag">On Campus</div>
+          <h2>Built for hands-on training.</h2>
+          <p>A modern learning environment with spacious classrooms, fully equipped computer labs, reliable internet, and creative studios.</p>
+        </div>
+        <div class="campus-arrows">
+          <button class="campus-arrow" onclick="scrollCampus(-1)" aria-label="Previous">←</button>
+          <button class="campus-arrow" onclick="scrollCampus(1)" aria-label="Next">→</button>
+        </div>
+        <div class="campus-wrap">
+          <div class="campus-strip" id="campusStrip">
+            <!-- IMAGE: Editing Rooms — students at editing workstations, landscape 800x600 -->
+            <div class="facility-card"><div class="facility-media"><span class="code">FIG. 01</span>
+              <div class="ph-wrap"><img src="media.jpg" class="ph-img" alt="Editing Rooms" onerror="phFallback(this)"><div class="ph-fallback"><span>🎬</span><b>Editing Rooms photo</b><small>800×600</small></div></div>
+            </div><div class="facility-body"><h4>Editing Rooms</h4><p>Industry-standard software and tools for video and audio production — film, journalism and digital media projects.</p></div></div>
+            <!-- IMAGE: Computer Labs — students at PCs, landscape 800x600 -->
+            <div class="facility-card"><div class="facility-media"><span class="code">FIG. 02</span>
+              <div class="ph-wrap"><img src="comp3.jpg" class="ph-img" alt="Computer Labs" onerror="phFallback(this)"><div class="ph-fallback"><span>💻</span><b>Computer Lab photo</b><small>800×600</small></div></div>
+            </div><div class="facility-body"><h4>Computer Labs</h4><p>Up-to-date machines and software for hands-on ICT, design and digital learning.</p></div></div>
+            <!-- IMAGE: Film Studios — camera/lighting setup, landscape 800x600 -->
+            <div class="facility-card"><div class="facility-media"><span class="code">FIG. 03</span>
+              <div class="ph-wrap"><img src="1.jpg" class="ph-img" alt="Film Studios" onerror="phFallback(this)"><div class="ph-fallback"><span>🎥</span><b>Film Studio photo</b><small>800×600</small></div></div>
+            </div><div class="facility-body"><h4>Film Studios</h4><p>Cameras, lighting and sound equipment for filmmaking, broadcasting and content creation.</p></div></div>
+            <!-- IMAGE: Beauty Studio — cosmetology/hair station, landscape 800x600 -->
+            <div class="facility-card"><div class="facility-media"><span class="code">FIG. 04</span>
+              <div class="ph-wrap"><img src="beauty2.jpg" class="ph-img" alt="Beauty Studio" onerror="phFallback(this)"><div class="ph-fallback"><span>💇</span><b>Beauty Studio photo</b><small>800×600</small></div></div>
+            </div><div class="facility-body"><h4>Beauty Studio</h4><p>A dedicated training studio for hairdressing, beauty therapy and cosmetology practicals.</p></div></div>
+            <!-- IMAGE: Business Lab — classroom/boardroom style room, landscape 800x600 -->
+            <div class="facility-card"><div class="facility-media"><span class="code">FIG. 05</span>
+              <div class="ph-wrap"><img src="comp4.jpg" class="ph-img" alt="Business Lab" onerror="phFallback(this)"><div class="ph-fallback"><span>💼</span><b>Business Lab photo</b><small>800×600</small></div></div>
+            </div><div class="facility-body"><h4>Business Lab</h4><p>A simulation space for business, HR and entrepreneurship coursework and case studies.</p></div></div>
+            <!-- IMAGE: Study Hall — classroom/library, landscape 800x600 -->
+            <div class="facility-card"><div class="facility-media"><span class="code">FIG. 06</span>
+              <div class="ph-wrap"><img src="class1.jpg" class="ph-img" alt="Study Hall" onerror="phFallback(this)"><div class="ph-fallback"><span>📚</span><b>Study Hall photo</b><small>800×600</small></div></div>
+            </div><div class="facility-body"><h4>Study Hall</h4><p>Quiet, spacious classrooms with reliable internet for lectures and independent study.</p></div></div>
+          </div>
+        </div>
+        <div class="campus-dots" id="campusDots"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- STUDENT SHOWCASE -->
+  <div data-page="showcase" class="page">
+    <section style="padding-top:46px;">
+      <div class="wrap">
+        <div class="subnav">
+          <a class="active" onclick="go('showcase')">Student Showcase</a>
+          <a onclick="go('gallery')">Gallery</a>
+          <a onclick="go('accommodation')">Accommodation</a>
+        </div>
+        <div class="section-head">
+          <div class="tag">Student Showcase</div>
+          <h2>What our students create.</h2>
+          <p>Spotlight features on real student projects</p>
+        </div>
+        <div class="testi-grid" id="showcaseGrid"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- GALLERY -->
+  <div data-page="gallery" class="page">
+    <section style="padding-top:46px;">
+      <div class="wrap">
+        <div class="subnav">
+          <a onclick="go('showcase')">Student Showcase</a>
+          <a class="active" onclick="go('gallery')">Gallery</a>
+          <a onclick="go('accommodation')">Accommodation</a>
+        </div>
+        <div class="section-head">
+          <div class="tag">Media Archive</div>
+          <h2>See NextBridge in action.</h2>
+          <p>Campus life, studios, and real student work across all eight schools. Click any photo to view it larger.</p>
+        </div>
+        <div class="gallery-tabs" id="galleryTabs"></div>
+        <div class="gallery-grid" id="galleryGrid"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ACCOMMODATION -->
+  <div data-page="accommodation" class="page">
+    <section style="padding-top:46px;">
+      <div class="wrap">
+        <div class="subnav">
+          <a onclick="go('showcase')">Student Showcase</a>
+          <a onclick="go('gallery')">Gallery</a>
+          <a class="active" onclick="go('accommodation')">Accommodation</a>
+        </div>
+        <div class="section-head">
+          <div class="tag">Accommodation</div>
+          <h2>Where to stay near campus.</h2>
+          <p>NextBridge (Kiserian Campus) operates from Nannet Plaza and does not run on-campus dormitories. Our admissions team can point you toward vetted, affordable lodging near Kiserian.</p>
+        </div>
+        <div class="panel" style="padding:22px 26px; border-left:3px solid var(--signal);">
+          <p style="margin:0; font-size:13.5px; color:var(--rivet);"><b style="color:var(--ink);">To confirm with the client:</b> whether NextBridge has any partner hostels or landlords near Kiserian it can recommend. Once confirmed, this page can list specific options with distance from campus, approximate rent, and contact details.</p>
+        </div>
+        <div class="features-grid" style="margin-top:24px;">
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-pin"/></svg></div><h4>Talk to Admissions</h4><p>Ask our team about student-friendly lodging near Kiserian when you apply.</p></div>
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-phone"/></svg></div><h4>WhatsApp for Options</h4><p>Message us directly and we'll share current listings we're aware of.</p></div>
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-building"/></svg></div><h4>Commute-Friendly</h4><p>Kiserian is well served by matatus along Magadi Road, making day-commuting from nearby areas straightforward.</p></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- NEWS -->
+  <div data-page="news" class="page">
+    <section style="padding-top:46px;">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="tag">News Desk</div>
+          <h2>Recent news.</h2>
+          <p>Updates posted by our team appear here in real time.</p>
+        </div>
+        <div id="newsGrid" class="news-grid"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- GUIDES -->
+  <div data-page="guides" class="page">
+    <section style="padding-top:46px;">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="tag">Guides</div>
+          <h2>Prep before you enrol.</h2>
+          <p>Practical, no-fluff reading for prospective and current students.</p>
+        </div>
+        <div class="guide-grid" id="guideGrid"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ADMISSIONS -->
+  <div data-page="admissions" class="page">
+    <section style="padding-top:46px;">
+      <div class="wrap" style="max-width:680px;">
+        <div class="section-head center">
+          <div class="tag">Admissions</div>
+          <h2>Apply to NextBridge.</h2>
+          <p>Fill this in and our admissions team will reach out within 24 hours — or WhatsApp us for a faster response.</p>
+        </div>
+        <div class="panel" style="padding:18px 22px; margin-bottom:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; align-items:center; border-left:3px solid var(--signal);">
+          <div style="font-size:13.5px;"><b>Application fee: KES 1,000</b><br><span style="color:var(--rivet); font-size:12.5px;">Paybill <span class="mono">418 44 25</span> — use your own name as the Account reference</span></div>
+          <span class="badge gold">Part-time &amp; online available</span>
+        </div>
+        <div class="calc-card">
+          <div class="tag">Estimate first</div>
+          <h3>What will your program cost?</h3>
+          <p class="sub">Pick a school and course to see level, duration and fee before you apply.</p>
+          <div class="calc-row">
+            <select id="calcSchool" onchange="onCalcSchoolChange()"></select>
+            <select id="calcCourse" onchange="onCalcCourseChange()"></select>
+          </div>
+          <div class="calc-result">
+            <div><span>Level</span><b id="calcLevel">—</b></div>
+            <div><span>Duration</span><b id="calcDuration">—</b></div>
+            <div><span>Fee</span><b id="calcFee">—</b></div>
+          </div>
+        </div>
+        <div class="faq-list" id="faqList"></div>
+
+        <form class="panel" style="padding:30px;" onsubmit="submitApplication(event)">
+          <div id="applyMsg"></div>
+          <div class="field"><label>Full name</label><input required id="apFullName" placeholder="Jane Wanjiru"></div>
+          <div class="field"><label>Phone number</label><input required id="apPhone" placeholder="07XX XXX XXX"></div>
+          <div class="field"><label>Email</label><input type="email" required id="apEmail" placeholder="you@email.com"></div>
+          <div class="field"><label>School of interest</label>
+            <select id="apSchool">
+              <option>School of ICT</option>
+              <option>School of Media</option>
+              <option>School of Business</option>
+              <option>School of Accountancy</option>
+              <option>School of Beauty and Cosmetology</option>
+              <option>School of Hospitality</option>
+              <option>School of Engineering</option>
+              <option>School of Plumbing</option>
+            </select>
+          </div>
+          <div class="field"><label>Message (optional)</label><textarea id="apMsg" rows="3" placeholder="Anything we should know?"></textarea></div>
+          <button class="btn btn-signal" style="width:100%;" type="submit">Submit Application</button>
+          <p class="hint center">Prefer to talk? <a href="https://wa.me/254725040404" target="_blank" style="color:var(--ink); font-weight:700;">Message us on WhatsApp →</a></p>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <!-- CONTACT -->
+  <div data-page="contact" class="page">
+    <section style="padding-top:46px;">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="tag">Contact</div>
+          <h2>Get in touch.</h2>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-pin"/></svg></div><h4>Visit us</h4><p>Nannet Plaza, Magadi Road, Kiserian</p></div>
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-phone"/></svg></div><h4>Call us</h4><p>0725 04 04 04 / 0711 10 10 10</p></div>
+          <div class="feature-card"><div class="icon-box"><svg class="icon"><use href="#i-mail"/></svg></div><h4>Email us</h4><p>info@nextbridgeinstitute.ac.ke</p></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <div class="wrap footer-grid">
+      <div>
+        <div class="brand" style="color:#fff; margin-bottom:14px;">
+          <div class="brand-mark">
+          <img src="logo8.png" class="logo-img" alt="NextBridge Institute logo">
+        </div>
+          <div class="brand-text"><b style="color:#fff;">NextBridge Institute</b><span>Professional Studies</span></div>
+        </div>
+        <p>Bridging potential to profession through practical, industry-focused training in Kiserian, Kenya.</p>
+      </div>
+      <div>
+        <h5>Quick Links</h5>
+        <ul>
+          <li><a onclick="go('about')">About Us</a></li>
+          <li><a onclick="go('schools')">Schools</a></li>
+          <li><a onclick="go('admissions')">Admissions</a></li>
+          <li><a onclick="switchApp('portal')">Student Portal</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Schools</h5>
+        <ul>
+          <li><a onclick="go('schools')">School of ICT</a></li>
+          <li><a onclick="go('schools')">School of Media</a></li>
+          <li><a onclick="go('schools')">School of Business</a></li>
+          <li><a onclick="go('schools')">Beauty &amp; Cosmetology</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Contact</h5>
+        <ul>
+          <li>Nannet Plaza, Magadi Road, Kiserian</li>
+          <li>0725 04 04 04 / 0711 10 10 10</li>
+          <li>info@nextbridgeinstitute.ac.ke</li>
+        </ul>
+      </div>
+    </div>
+    <div class="wrap foot-bottom">
+      <span>© 2026 NEXTBRIDGE INSTITUTE OF PROFESSIONAL STUDIES</span>
+      <span><a onclick="switchApp('admin')" style="color:#748199;">STAFF LOGIN</a></span>
+    </div>
+  </footer>
+</div>
+
+<!-- ================= STUDENT PORTAL ================= -->
+<div data-view="portal">
+  <header class="site-header">
+    <div class="wrap nav-row">
+      <a class="brand" onclick="switchApp('site')">
+         <div class="brand-mark">
+          <img src="logo8.png" class="logo-img" alt="NextBridge Institute logo">
+        </div>
+        <div class="brand-text"><b>NextBridge Institute</b><span>Student Portal</span></div>
+      </a>
+      <div class="nav-cta">
+        <a class="btn btn-line btn-sm" onclick="switchApp('site')">← Back to site</a>
+        <a class="btn btn-signal btn-sm" id="portalLogoutBtn" style="display:none;" onclick="portalLogout()">Log out</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-shell">
+    <div class="wrap">
+
+      <div id="portalLogin" class="panel auth-box" style="max-width:460px;">
+        <div class="brand-mark" style="margin:0 auto 14px;">
+            <img src="logo8.png" class="logo-img" alt="NextBridge Institute logo">
+        </div>
+        <h2 id="portalTitle">New Student Registration</h2>
+        <p class="sub" id="portalSub">Pick your school and course — your admission number is generated for you.</p>
+        <div style="display:flex; gap:8px; margin-bottom:20px;">
+          <button class="btn btn-ghost btn-sm" id="tabNewBtn" style="flex:1;" onclick="switchPortalMode('new')">New Student</button>
+          <button class="btn btn-ghost btn-sm" id="tabReturningBtn" style="flex:1;" onclick="switchPortalMode('returning')">Returning Student</button>
+        </div>
+        <div id="portalMsg"></div>
+        <p class="hint" id="backendModeNote" style="margin-top:-4px; margin-bottom:16px;"></p>
+
+        <div id="newStudentForm">
+          <div class="field"><label>Full name</label><input id="regName" placeholder="Jane Wanjiru"></div>
+          <div class="field"><label>Email</label><input type="email" id="regEmail" placeholder="you@email.com"></div>
+          <div class="field"><label>Password</label><input type="password" id="regPassword" placeholder="Create a password"></div>
+          <div class="field"><label>School</label>
+            <select id="regSchool" onchange="onRegSchoolChange()"></select>
+          </div>
+          <div class="field"><label>Course</label>
+            <select id="regCourse"></select>
+          </div>
+          <button class="btn btn-signal" style="width:100%;" onclick="registerStudent()">Generate My Admission Number</button>
+          
+        </div>
+
+        <div id="returningStudentForm" style="display:none;">
+          <div class="field"><label>Email</label><input type="email" id="loginEmail" placeholder="you@email.com"></div>
+          <div class="field"><label>Password</label><input type="password" id="loginPassword" placeholder="Your password"></div>
+          <button class="btn btn-signal" style="width:100%;" onclick="portalLogin()">Log In</button>
+        </div>
+      </div>
+
+      <div id="portalDash" style="display:none;">
+        <div class="dash-topbar">
+          <div>
+            <h2 id="dashGreeting">Welcome back</h2>
+            <p style="color:var(--rivet); margin:4px 0 0;" id="dashAdm"></p>
+          </div>
+          <span class="badge gold">Active Student</span>
+        </div>
+        <div class="stat-row">
+          <div class="stat-card"><b id="statCourse">—</b><span>Enrolled Program</span></div>
+          <div class="stat-card"><b id="statSem">—</b><span>Current Semester</span></div>
+          <div class="stat-card"><b id="statProg">0%</b><span>Progress</span></div>
+        </div>
+        <div class="dash-grid">
+          <div class="panel" style="padding:24px;">
+            <h4 style="margin-bottom:14px; font-size:15.5px;">My Program</h4>
+            <div class="field"><label>Choose your enrolled course</label>
+              <select id="dashCourseSelect" onchange="updateEnrollment()"></select>
+            </div>
+            <h4 style="margin:26px 0 10px; font-size:15.5px;">Announcements</h4>
+            <div id="dashNews"></div>
+          </div>
+          <div class="panel" style="padding:24px;">
+            <h4 style="margin-bottom:14px; font-size:15.5px;">Profile</h4>
+            <div class="list-item"><span>Name</span><b id="profName">—</b></div>
+            <div class="list-item"><span>Admission No.</span><b class="mono" id="profAdm">—</b></div>
+            <div class="list-item"><span>School</span><b id="profSchool">—</b></div>
+            <div class="list-item"><span>Status</span><span class="badge">Enrolled</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ================= ADMIN / CMS ================= -->
+<div data-view="admin">
+  <header class="site-header">
+    <div class="wrap nav-row">
+      <a class="brand" onclick="switchApp('site')">
+        <div class="brand-mark">
+          <img src="logo8.png" class="logo-img" alt="NextBridge Institute logo">
+        </div>
+        <div class="brand-text"><b>NextBridge Institute</b><span>Kiserian Campus</span></div>
+      </a>
+      <div class="nav-cta">
+        <a class="btn btn-line btn-sm" onclick="switchApp('site')">← Back to site</a>
+        <a class="btn btn-signal btn-sm" id="adminLogoutBtn" style="display:none;" onclick="adminLogout()">Log out</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-shell">
+    <div class="wrap">
+
+      <div id="adminLogin" class="panel auth-box">
+        <div class="brand-mark" style="margin:0 auto 14px;">
+          <img src="logo8.png" class="logo-img" alt="NextBridge Institute logo">
+        </div>
+        <h2>Staff Login</h2>
+        <p class="sub">Manage courses and the news desk.</p>
+        <div id="adminMsg"></div>
+        <div class="field" id="adminEmailField" style="display:none;"><label>Email</label><input type="email" id="adminEmail" placeholder="staff@nextbridge.ac.ke"></div>
+        <div class="field"><label>Password</label><input type="password" id="adminPass" placeholder="Demo password: nextbridge2026"></div>
+        <button class="btn btn-signal" style="width:100%;" onclick="adminLoginFn()">Log in</button>
+        <p class="hint" id="adminModeNote">Demo console — password shown above for testing purposes.</p>
+      </div>
+
+      <div id="adminDash" style="display:none;">
+        <div class="dash-topbar">
+          <h2>Staff Console</h2>
+          <span class="badge gold">Admin</span>
+        </div>
+
+        <div class="panel" style="padding:24px; margin-bottom:20px;">
+          <h4 style="margin-bottom:16px; font-size:15.5px;">Admissions deadline (drives the homepage countdown)</h4>
+          <div class="dash-grid" style="grid-template-columns:1fr auto; gap:12px; align-items:end;">
+            <div class="field" style="margin:0;"><label>Intake closes on</label><input type="date" id="intakeDateInput"></div>
+            <button class="btn btn-ink btn-sm" onclick="saveIntakeDate()">Save Date</button>
+          </div>
+        </div>
+
+        <div class="panel" style="padding:24px; margin-bottom:20px;">
+          <h4 style="margin-bottom:16px; font-size:15.5px;">Add a course</h4>
+          <div class="dash-grid" style="grid-template-columns:1.2fr 1.4fr 1fr 1fr; gap:12px; align-items:end; margin-bottom:12px;">
+            <div class="field" style="margin:0;"><label>School</label>
+              <select id="cSchool">
+                <option>School of ICT</option>
+                <option>School of Media</option>
+                <option>School of Business</option>
+                <option>School of Accountancy</option>
+                <option>School of Beauty and Cosmetology</option>
+                <option>School of Hospitality</option>
+                <option>School of Engineering</option>
+                <option>School of Plumbing</option>
+              </select>
+            </div>
+            <div class="field" style="margin:0;"><label>Course title</label><input id="cTitle" placeholder="e.g. Web Development"></div>
+            <div class="field" style="margin:0;"><label>Duration</label><input id="cDur" placeholder="e.g. 6 semesters"></div>
+            <div class="field" style="margin:0;"><label>Level</label>
+              <select id="cLevel"><option>Diploma</option><option>Certificate</option><option>Short Course</option></select>
+            </div>
+          </div>
+          <div class="dash-grid" style="grid-template-columns:1fr 1fr 1fr auto; gap:12px; align-items:end;">
+            <div class="field" style="margin:0;"><label>Exam Body</label><input id="cExamBody" placeholder="e.g. CDACC, KNEC, Internal"></div>
+            <div class="field" style="margin:0;"><label>Entry requirement</label><input id="cEntry" placeholder="e.g. C-, D Plain, Open"></div>
+            <div class="field" style="margin:0;"><label>Fee per sem (KES)</label><input id="cFee" type="number" placeholder="e.g. 30000"></div>
+          </div>
+          <button class="btn btn-ink btn-sm" style="margin-top:12px;" onclick="addCourse()">+ Add Course</button>
+        </div>
+
+        <div class="panel" style="padding:24px; margin-bottom:20px;">
+          <h4 style="margin-bottom:16px; font-size:15.5px;">All courses</h4>
+          <table>
+            <thead><tr><th>Code</th><th>School</th><th>Course</th><th>Level</th><th>Duration</th><th>Exam</th><th>Entry</th><th>Fee</th><th></th></tr></thead>
+            <tbody id="adminCourseTable"></tbody>
+          </table>
+        </div>
+
+        <div class="panel" style="padding:24px; margin-bottom:20px;">
+          <h4 style="margin-bottom:16px; font-size:15.5px;">Post to News Desk</h4>
+          <div class="dash-grid" style="grid-template-columns:1fr 2fr auto; gap:12px; align-items:end;">
+            <div class="field" style="margin:0;"><label>Tag</label><input id="nTag" placeholder="e.g. Admissions"></div>
+            <div class="field" style="margin:0;"><label>Headline</label><input id="nTitle" placeholder="e.g. New intake opens August 2026"></div>
+          </div>
+          <div class="field"><label>Body</label><textarea id="nBody" rows="2" placeholder="Short summary students will see"></textarea></div>
+          <button class="btn btn-ink btn-sm" onclick="addNews()">+ Publish</button>
+        </div>
+
+        <div class="panel" style="padding:24px;">
+          <h4 style="margin-bottom:16px; font-size:15.5px;">Published news</h4>
+          <div id="adminNewsList"></div>
+        </div>
+
+        <div class="panel" style="padding:24px; margin-top:20px;">
+          <h4 style="margin-bottom:16px; font-size:15.5px;">Add a graduate testimonial</h4>
+          <div class="dash-grid" style="grid-template-columns:1fr 1fr auto; gap:12px; align-items:end;">
+            <div class="field" style="margin:0;"><label>Graduate name</label><input id="tName" placeholder="e.g. Faith Wambui"></div>
+            <div class="field" style="margin:0;"><label>Program</label><input id="tProgram" placeholder="e.g. Software Development, 2025"></div>
+          </div>
+          <div class="field"><label>Quote</label><textarea id="tQuote" rows="2" placeholder="What did they say about NextBridge?"></textarea></div>
+          <button class="btn btn-ink btn-sm" onclick="addTestimonial()">+ Publish Testimonial</button>
+        </div>
+
+        <div class="panel" style="padding:24px; margin-top:20px;">
+          <h4 style="margin-bottom:16px; font-size:15.5px;">Published testimonials</h4>
+          <div id="adminTestiList"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Prospectus request modal -->
+<div class="modal-overlay" id="prospectusModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeProspectusModal()">×</button>
+    <h3 style="font-size:19px; margin-bottom:6px;">Request the Prospectus</h3>
+    <p style="color:var(--rivet); font-size:13.5px; margin:0 0 18px;">Tell us where to send it — our admissions team will follow up too.</p>
+    <div id="prospectusMsg"></div>
+    <div class="field"><label>Full name</label><input id="prosName" placeholder="Jane Wanjiru"></div>
+    <div class="field"><label>Email</label><input type="email" id="prosEmail" placeholder="you@email.com"></div>
+    <div class="field"><label>Phone</label><input id="prosPhone" placeholder="07XX XXX XXX"></div>
+    <div class="field"><label>School of interest</label><select id="prosSchool"></select></div>
+    <button class="btn btn-signal" style="width:100%;" onclick="submitProspectus()">Send Me the Prospectus</button>
+  </div>
+</div>
+
+<!-- Global lightbox for gallery (sits outside the page/view system so it can overlay anything) -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">×</button>
+  <div class="lightbox-inner">
+    <div class="lightbox-media ph-wrap">
+      <img id="lightboxImg" src="" class="ph-img" alt="" onerror="phFallback(this)">
+      <div class="ph-fallback"><span>📷</span><b id="lightboxFallbackText"></b><small>Recommended: 1200×750</small></div>
+    </div>
+    <div class="lightbox-caption"><span id="lightboxCaption"></span><span class="badge" id="lightboxCat"></span></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   BACKEND CONFIG — fill these in once you create a free project
+   at https://supabase.com and run nextbridge-schema.sql there.
+   Project Settings → API → Project URL / anon public key.
+   Until both are filled in, the site automatically runs in
+   DEMO MODE using browser-local storage instead — nothing breaks,
+   it just doesn't persist for real visitors yet.
+   ============================================================ */
+const SUPABASE_CONFIG = {
+  url: 'YOUR_SUPABASE_URL',       // e.g. 'https://abcxyz.supabase.co'
+  anonKey: 'YOUR_SUPABASE_ANON_KEY'
+};
+let sb = null;
+const BACKEND_LIVE = !!(window.supabase && SUPABASE_CONFIG.url !== 'YOUR_SUPABASE_URL' && SUPABASE_CONFIG.anonKey !== 'YOUR_SUPABASE_ANON_KEY');
+if(BACKEND_LIVE){ sb = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey); }
+
+/* ============ Data model ============ */
+const SCHOOLS = ["School of ICT","School of Media","School of Business","School of Accountancy","School of Beauty and Cosmetology","School of Hospitality","School of Engineering","School of Plumbing"];
+const SCHOOL_PREFIX = {"School of ICT":"ICT","School of Media":"MED","School of Business":"BUS","School of Accountancy":"ACC","School of Beauty and Cosmetology":"BEA","School of Hospitality":"HOS","School of Engineering":"ENG","School of Plumbing":"PLM"};
+const TBC = "To confirm";
+function mk(school,title,level,duration,examBody,entry,fee){ return {id:school.slice(0,3)+'-'+title.replace(/[^a-z0-9]/gi,'').toLowerCase()+'-'+level.slice(0,3).toLowerCase(), school,title,level,duration,examBody,entry,fee}; }
+const DEFAULT_COURSES = [
+  // ===== School of ICT (from brochure) =====
+  mk("School of ICT","Software Development","Certificate","9 Months","Internal","Open",30000),
+  mk("School of ICT","Cyber Security & Ethical Hacking","Certificate","9 Months","Internal","Open",33500),
+  mk("School of ICT","Introduction to Cyber Security","Certificate","3 Months","Internal","Open",33500),
+  mk("School of ICT","Web Design & Development","Certificate","6 Months","Internal","Open",25000),
+  mk("School of ICT","Programming (Python, JavaScript)","Certificate","6 Months","Internal","Open",30000),
+  mk("School of ICT","WordPress Web Design","Certificate","2 Months","Internal","Open",30000),
+  mk("School of ICT","Data Science","Certificate","12 Months","Internal","Open",30000),
+  mk("School of ICT","Data Management & Analysis","Certificate","6 Months","Internal","Open",30000),
+  mk("School of ICT","Artificial Intelligence","Certificate","2 Months","Internal","Open",20000),
+  mk("School of ICT","Networking","Certificate","3 Months","Internal","Open",15000),
+  mk("School of ICT","Digital Marketing","Certificate","1 Month","Internal","Open",20000),
+  mk("School of ICT","ICT","Diploma","2 Years","KNEC","C-",18000),
+  mk("School of ICT","ICT","Certificate","1 Year","KNEC","D Plain",18000),
+  mk("School of ICT","Computer Packages","Short Course","2 Months","Internal","Open",5000),
+  // ===== School of Media (from brochure) =====
+  mk("School of Media","Film & Video Production","Certificate","4 semesters","CDACC","D-",30000),
+  mk("School of Media","Film & Video Production","Diploma","8 semesters","CDACC","C-",30000),
+  mk("School of Media","Photography","Diploma","8 semesters","CDACC","C-",30000),
+  mk("School of Media","Photography","Certificate","4 semesters","CDACC","D-",30000),
+  mk("School of Media","Videography","Diploma","8 semesters","CDACC","C-",35000),
+  mk("School of Media","Videography","Certificate","4 semesters","CDACC","D-",35000),
+  mk("School of Media","Cinematography Basics","Short Course","1 Month","Internal","Open",30000),
+  mk("School of Media","Video Editing & Post Production","Short Course","3 Months","Internal","Open",40000),
+  mk("School of Media","Scripting for Film & TV","Short Course","1 Month","Internal","Open",30000),
+  mk("School of Media","Directing for Screen","Short Course","2 Months","Internal","Open",30000),
+  mk("School of Media","Sound for Film & Video","Short Course","1 Month","Internal","Open",15000),
+  mk("School of Media","Documentary Production","Short Course","2 Months","Internal","Open",30000),
+  mk("School of Media","Colour Grading & Correction","Short Course","1 Month","Internal","Open",15000),
+  mk("School of Media","DaVinci Resolve & Premiere Pro","Short Course","1 Month","Internal","Open",15000),
+  mk("School of Media","Illustrator, InDesign & Canva","Short Course","2 Months","Internal","Open",15000),
+  mk("School of Media","Graphic Design","Short Course","2 semesters","Internal","Open",20000),
+  mk("School of Media","Photo Editing, Studio & Events","Short Course","3 Months","Internal","Open",30000),
+  mk("School of Media","Live Streaming","Short Course","1 Month","Internal","Open",10000),
+  // ===== School of Business (from brochure) =====
+  mk("School of Business","Business Management","Diploma","2 Years","CDACC/KNEC","C-",18000),
+  mk("School of Business","Human Resource Management","Diploma","2 Years","CDACC/KNEC","C-",18000),
+  mk("School of Business","Supply Chain Management","Diploma","2 Years","CDACC/KNEC","C-",18000),
+  mk("School of Business","Project Planning & Management","Diploma","2 Years","CDACC/KNEC","Open",18000),
+  mk("School of Business","Secretarial Studies","Certificate","1 Year","CDACC/KNEC","D Plain",18000),
+  mk("School of Business","Business Management","Certificate","1 Year","CDACC/KNEC","D Plain",18000),
+  mk("School of Business","Human Resource Management","Certificate","1 Year","CDACC/KNEC","D Plain",18000),
+  mk("School of Business","Supply Chain Management","Certificate","1 Year","CDACC/KNEC","D Plain",18000),
+  mk("School of Business","Project Planning & Management","Certificate","1 Year","CDACC/KNEC","D Plain",18000),
+  mk("School of Business","Front Office Management","Short Course","3 Months","KNEC","Open",18000),
+  mk("School of Business","Customer Service","Short Course","3 Months","ICM","D+",18000),
+  mk("School of Business","Public Relations","Short Course","6 Months","ICM","D+",18000),
+  // ===== School of Accountancy (from brochure) =====
+  mk("School of Accountancy","CPA (Certified Public Accountant)","Levels I–III","3 Months","KASNEB","C+",22500),
+  mk("School of Accountancy","ATD (Accounting Technicians Diploma)","Levels I–III","3 Months","KASNEB","C+",26000),
+  // ===== School of Beauty and Cosmetology (from brochure) =====
+  mk("School of Beauty and Cosmetology","Cosmetology, Beauty & Hair","Diploma","2 Years","CDACC","Open",20000),
+  mk("School of Beauty and Cosmetology","Hairdressing","Short Course","6 Months","CDACC","Open",19000),
+  mk("School of Beauty and Cosmetology","Beauty Therapy","Short Course","6 Months","CDACC","Open",20000),
+  mk("School of Beauty and Cosmetology","Barbering","Short Course","3 Months","CDACC","Open",20000),
+  mk("School of Beauty and Cosmetology","Massage Therapy","Short Course","3 Months","CDACC","Open",20000),
+  mk("School of Beauty and Cosmetology","Makeup & Nail Technology","Short Course","6 Months","CDACC","Open",20000),
+  // ===== New schools — awaiting confirmed brochure details =====
+  mk("School of Hospitality","Hotel & Restaurant Management","Diploma",TBC,"TBC","TBC",null),
+  mk("School of Hospitality","Food & Beverage Production","Certificate",TBC,"TBC","TBC",null),
+  mk("School of Hospitality","Housekeeping Operations","Short Course",TBC,"TBC","TBC",null),
+  mk("School of Engineering","Electrical Engineering","Diploma",TBC,"TBC","TBC",null),
+  mk("School of Engineering","Mechanical Engineering","Diploma",TBC,"TBC","TBC",null),
+  mk("School of Engineering","Civil Engineering","Certificate",TBC,"TBC","TBC",null),
+  mk("School of Plumbing","General Plumbing","Certificate",TBC,"TBC","TBC",null),
+  mk("School of Plumbing","Pipe Fitting & Installation","Short Course",TBC,"TBC","TBC",null),
+];
+function feeLabel(fee){ return (fee===null||fee===undefined||fee==='') ? 'To confirm' : 'KES ' + Number(fee).toLocaleString() + ' /sem'; }
+const DEFAULT_NEWS = [
+  {id:"n1", tag:"Cyber Security", title:"The Advanced Course in Cyber Security", body:"A new short course led by Mr. Elly Oyuolo, School of ICT.", ts:Date.now()-86400000*2},
+  {id:"n2", tag:"Admissions", title:"Admissions Ongoing — Apply Today", body:"Places are open for the next intake across all five schools.", ts:Date.now()-86400000*5},
+  {id:"n3", tag:"Cosmetology", title:"A Certificate in Beauty Therapy", body:"Led by Miss Mercy Chirchir, hands-on training in our beauty studio.", ts:Date.now()-86400000*9},
+];
+const DEFAULT_TESTIMONIALS = [
+  {id:"t1", name:"lawrence Bahati", program:"ICT · 2025", quote:"Nextbridge gave me more than a certificate- it gave me practical skills, confidence, and the courage to pursue my career.", placeholder:true},
+  {id:"t2", name:"Alfred Atieno", program:"Business Management.2025", quote: "My experience at Nextbridge was truly transformative. The practical training ans support prepared me for the real world and gave me confidence in my skills.", placeholder:true},
+  {id:"t3", name:"Jeremy", program:"Media . 2025", quote:"Nextbridge helped me turn my potential into career.", placeholder:true},
+];
+const FAQS = [
+  {q:"What documents do I need to apply?", a:"A copy of your national ID or birth certificate, your KCSE or highest academic certificate, and a passport photo. Our admissions team will confirm any course-specific requirements."},
+  {q:"Do you offer flexible payment plans?", a:"Yes — speak to our admissions team about installment options for your specific course. Exact fees for each course are shown in the calculator above once published."},
+  {q:"Can I switch schools or courses after enrolling?", a:"Yes, transfers are possible within the first few weeks of a semester, subject to space availability. Talk to the admissions office as early as possible."},
+  {q:"Are the certificates and diplomas recognised?", a:"Yes, our programs are designed around industry-recognised skills and practical portfolios that employers value."},
+  {q:"How do I check my application status?", a:"WhatsApp our admissions line, or log into the Student Portal once you have an admission number to track your enrollment."}
+];
+
+/* ============ Global photo fallback ============
+   Called by every ph-img's onerror. Swaps in the neighbouring .ph-fallback
+   block so a missing photo never shows a broken-image icon. Once a real
+   photo file replaces the src="REPLACE-ME-..." placeholder, this never fires. */
+function phFallback(img){
+  img.onerror = null;
+  img.style.display = 'none';
+  const fb = img.parentElement.querySelector('.ph-fallback');
+  if(fb) fb.style.display = 'flex';
+}
+
+/* ============ Gallery data ============
+   Each item needs a real photo dropped in at the src (REPLACE-ME-*.jpg).
+   Until then the ph-fallback caption shows so nothing looks broken. */
+const GALLERY_CATEGORIES = ["All","Campus","ICT & Media","Beauty & Cosmetology","Business","Student Work"];
+const GALLERY_ITEMS = [
+  {id:"g1", cat:"Campus", file:"building.webp", caption:"Nannet Plaza campus exterior", size:"1200×900", tall:true},
+  {id:"g2", cat:"Campus", file:"recep.jpg", caption:"Reception & student lounge", size:"1200×900"},
+  {id:"g3", cat:"ICT & Media", file:"comp1.jpg", caption:"ICT lab — Software Development class", size:"1200×900"},
+  {id:"g4", cat:"ICT & Media", file:"3.jpg", caption:"Videography students on set", size:"1200×900", tall:true},
+  {id:"g5", cat:"ICT & Media", file:"media.jpg", caption:"Editing suite in session", size:"1200×900"},
+  {id:"g6", cat:"Beauty & Cosmetology", file:"beauty2.jpg", caption:"Beauty Therapy practical session", size:"1200×900"},
+  {id:"g7", cat:"Beauty & Cosmetology", file:"hair.jpg", caption:"Hairdressing students at work", size:"1200×900", tall:true},
+  {id:"g8", cat:"Business", file:"class1.jpg", caption:"Business Management classroom", size:"1200×900"},
+  {id:"g9", cat:"Business", file:"1.jpg", caption:"CPA/ATD revision class", size:"1200×900"},
+  {id:"g10", cat:"Student Work", file:"4.jpg", caption:"Student photography portfolio piece", size:"1200×900", tall:true},
+  {id:"g11", cat:"Student Work", file:"graduation.webp", caption:"Graduation day", size:"1200×900"},
+  {id:"g12", cat:"Campus", file:"comp3.jpg", caption:"Computer lab, open hours", size:"1200×900"},
+];
+let galleryFilter = "All";
+
+/* ============ Guides data — original NextBridge advice content ============ */
+const GUIDES = [
+  {id:"gd1", tag:"Choosing a Program", title:"How to Choose the Right School at NextBridge", img:"REPLACE-ME-guide-choosing.jpg",
+   excerpt:"With eight schools on offer, picking one comes down to three questions: what you enjoy, what pays where you live, and how fast you want to start earning.",
+   full:"Start with what you already do for free — editing videos for fun, fixing friends' laptops, doing makeup for events. That instinct usually points to the right school faster than any aptitude test. Next, weigh timeline: short courses (1–3 months) get you working fastest but narrower; diplomas (2 years) take longer but open more doors and meet higher entry grades at employers. Finally, talk to admissions about real placement outcomes for the specific course, not just the school — outcomes vary a lot between, say, Software Development and Computer Packages even within the same School of ICT."},
+  {id:"gd2", tag:"Getting Started", title:"What to Expect in Your First Month", img:"REPLACE-ME-guide-firstmonth.jpg",
+   excerpt:"Orientation, timetables, and your first practical session — here's what actually happens after you enrol.",
+   full:"Week one is orientation: campus tour, meeting your class coordinator, and collecting your student ID and admission number (format NXT/[school]/[number]/[year]). Weeks two and three settle into a rhythm of theory sessions paired with hands-on lab or studio time — expect more practical hours than a typical classroom course. By week four you'll usually have your first small project or assessment. If a class or topic isn't clicking, raise it with your instructor early; most courses build directly on the previous module, so gaps compound quickly."},
+  {id:"gd3", tag:"Building Skills", title:"Building a Portfolio While You Study", img:"REPLACE-ME-guide-portfolio.jpg",
+   excerpt:"Employers in ICT, media and beauty hire on portfolios first, certificates second. Start building yours in week one, not your final semester.",
+   full:"Treat every class project as portfolio material from day one — save source files, before/after photos, or code repositories as you go, not just at graduation. For ICT and Media students: publish finished work publicly (GitHub, a simple portfolio site, or a YouTube/Behance page) as soon as it's good enough to show, and keep iterating on it. For Beauty & Cosmetology students: photograph every practical session (with model consent) — a visual portfolio matters as much as a certificate when applying to salons. Ask instructors which class projects are strong enough to showcase; they'll usually tell you honestly."},
+  {id:"gd4", tag:"Finances", title:"Financing Your Studies: Payment Plans Explained", img:"REPLACE-ME-guide-finance.jpg",
+   excerpt:"Fees are billed per semester, not upfront in full. Here's how the instalment structure actually works.",
+   full:"NextBridge bills tuition per semester rather than for the full program upfront, which keeps the initial commitment lower. After paying the KES 1,000 application fee (Paybill 418 44 25, using your name as the account reference), the admissions office will confirm your specific course fee and semester schedule. Many short courses (1–3 months) are a single payment for the full course; longer diplomas are billed per semester. If a payment date is tight, talk to admissions before it's due, not after — plans are usually easier to arrange proactively."},
+  {id:"gd5", tag:"Careers", title:"From Classroom to Client: Preparing for Attachment", img:"REPLACE-ME-guide-attachment.jpg",
+   excerpt:"Practical placement is where certificates turn into real experience. A little prep before your attachment starts goes a long way.",
+   full:"Before your attachment or industry placement begins, get two things in order: a one-page CV listing your coursework and any class projects, and a short portfolio sample relevant to the placement (a design piece, a spreadsheet model, a hairstyle look-book — whatever fits your school). On day one, ask your supervisor what a 'good' outcome looks like for your placement period so you're working toward something specific rather than just showing up. Keep a simple log of what you did each week — it becomes the backbone of your placement report and your first real portfolio entry from outside the classroom."}
+];
+
+
+let state = { courses: null, news: null, testimonials: null, activeSchool: SCHOOLS[0], student: null, search:'', levelFilter:'', intakeDate: null };
+
+/* ============ Storage helpers ============ */
+async function loadShared(key, fallback){
+  try{ const r = await window.storage.get(key, true); return r ? JSON.parse(r.value) : fallback; }
+  catch(e){ return fallback; }
+}
+async function saveShared(key, value){
+  try{ await window.storage.set(key, JSON.stringify(value), true); }catch(e){ console.error(e); }
+}
+async function loadPersonal(key){
+  try{ const r = await window.storage.get(key, false); return r ? JSON.parse(r.value) : null; }
+  catch(e){ return null; }
+}
+async function savePersonal(key, value){
+  try{ await window.storage.set(key, JSON.stringify(value), false); }catch(e){ console.error(e); }
+}
+
+/* ============================================================
+   DATA ACCESS LAYER — every read/write in the app goes through
+   `db.*` below instead of touching Supabase or window.storage
+   directly. When BACKEND_LIVE is true it talks to the real
+   Postgres tables (see nextbridge-schema.sql). Otherwise it
+   quietly falls back to the same window.storage demo behaviour
+   the site has been using in preview. This is the only place
+   that needs to change if the backend approach ever changes.
+   ============================================================ */
+const db = {
+  courses: {
+    async list(){
+      if(BACKEND_LIVE){
+        const {data,error} = await sb.from('courses').select('*').order('created_at');
+        if(error){ console.error(error); return []; }
+        return data.map(c=>({id:c.id, school:c.school, title:c.title, level:c.level, duration:c.duration, examBody:c.exam_body, entry:c.entry, fee:c.fee}));
+      }
+      const list = await loadShared('nb-courses', DEFAULT_COURSES);
+      return list.length ? list : DEFAULT_COURSES;
+    },
+    async add(c){
+      if(BACKEND_LIVE){
+        const {error} = await sb.from('courses').insert({school:c.school, title:c.title, level:c.level, duration:c.duration, exam_body:c.examBody, entry:c.entry, fee:c.fee});
+        if(error) console.error(error);
+      } else {
+        state.courses.push(c);
+        await saveShared('nb-courses', state.courses);
+      }
+    },
+    async remove(id){
+      if(BACKEND_LIVE){
+        const {error} = await sb.from('courses').delete().eq('id', id);
+        if(error) console.error(error);
+      } else {
+        state.courses = state.courses.filter(c=>c.id!==id);
+        await saveShared('nb-courses', state.courses);
+      }
+    }
+  },
+  news: {
+    async list(){
+      if(BACKEND_LIVE){
+        const {data,error} = await sb.from('news').select('*').order('created_at',{ascending:false});
+        if(error){ console.error(error); return []; }
+        return data.map(n=>({id:n.id, tag:n.tag, title:n.title, body:n.body, ts:new Date(n.created_at).getTime()}));
+      }
+      const list = await loadShared('nb-news', DEFAULT_NEWS);
+      return list.length ? list : DEFAULT_NEWS;
+    },
+    async add(n){
+      if(BACKEND_LIVE){
+        const {error} = await sb.from('news').insert({tag:n.tag, title:n.title, body:n.body});
+        if(error) console.error(error);
+      } else {
+        state.news.push(n);
+        await saveShared('nb-news', state.news);
+      }
+    },
+    async remove(id){
+      if(BACKEND_LIVE){
+        const {error} = await sb.from('news').delete().eq('id', id);
+        if(error) console.error(error);
+      } else {
+        state.news = state.news.filter(n=>n.id!==id);
+        await saveShared('nb-news', state.news);
+      }
+    }
+  },
+  testimonials: {
+    async list(){
+      if(BACKEND_LIVE){
+        const {data,error} = await sb.from('testimonials').select('*').order('created_at');
+        if(error){ console.error(error); return []; }
+        return data.map(t=>({id:t.id, name:t.name, program:t.program, quote:t.quote, placeholder:t.is_placeholder}));
+      }
+      const list = await loadShared('nb-testimonials', DEFAULT_TESTIMONIALS);
+      return list.length ? list : DEFAULT_TESTIMONIALS;
+    },
+    async add(t){
+      if(BACKEND_LIVE){
+        const {error} = await sb.from('testimonials').insert({name:t.name, program:t.program, quote:t.quote, is_placeholder:!!t.placeholder});
+        if(error) console.error(error);
+      } else {
+        state.testimonials.push(t);
+        await saveShared('nb-testimonials', state.testimonials);
+      }
+    },
+    async remove(id){
+      if(BACKEND_LIVE){
+        const {error} = await sb.from('testimonials').delete().eq('id', id);
+        if(error) console.error(error);
+      } else {
+        state.testimonials = state.testimonials.filter(t=>t.id!==id);
+        await saveShared('nb-testimonials', state.testimonials);
+      }
+    }
+  },
+  settings: {
+    async get(key, fallback){
+      if(BACKEND_LIVE){
+        const {data,error} = await sb.from('settings').select('value').eq('key',key).maybeSingle();
+        if(error || !data) return fallback;
+        return data.value;
+      }
+      return await loadShared('nb-'+key, fallback);
+    },
+    async set(key, value){
+      if(BACKEND_LIVE){
+        const {error} = await sb.from('settings').upsert({key, value});
+        if(error) console.error(error);
+      } else {
+        await saveShared('nb-'+key, value);
+      }
+    }
+  },
+  applications: {
+    async add(a){
+      if(BACKEND_LIVE){
+        const {error} = await sb.from('applications').insert({name:a.name, phone:a.phone, email:a.email, school:a.school, message:a.message});
+        if(error) console.error(error);
+      } else {
+        const apps = await loadShared('nb-applications', []);
+        apps.push(a);
+        await saveShared('nb-applications', apps);
+      }
+    }
+  },
+  prospectus: {
+    async add(p){
+      if(BACKEND_LIVE){
+        const {error} = await sb.from('prospectus_requests').insert({name:p.name, email:p.email, phone:p.phone, school:p.school});
+        if(error) console.error(error);
+      } else {
+        const list = await loadShared('nb-prospectus-requests', []);
+        list.push(p);
+        await saveShared('nb-prospectus-requests', list);
+      }
+    }
+  }
+};
+
+function applyBackendModeUI(){
+  const note = document.getElementById('backendModeNote');
+  if(note) note.textContent = BACKEND_LIVE
+    ? 'Connected to the live NextBridge backend.'
+    : 'Registration.';
+  const adminEmailField = document.getElementById('adminEmailField');
+  if(adminEmailField) adminEmailField.style.display = BACKEND_LIVE ? 'block' : 'none';
+  const adminNote = document.getElementById('adminModeNote');
+  if(adminNote) adminNote.textContent = BACKEND_LIVE
+    ? 'Staff accounts are managed in Supabase — see nextbridge-schema.sql for how to grant access.'
+    : 'Demo console — password shown above for testing purposes.';
+  const adminPassField = document.getElementById('adminPass');
+  if(adminPassField) adminPassField.placeholder = BACKEND_LIVE ? 'Your password' : 'Demo password: nextbridge2026';
+}
+
+async function initData(){
+  state.courses = await db.courses.list();
+  state.news = await db.news.list();
+  state.testimonials = await db.testimonials.list();
+  const defaultIntake = new Date(Date.now() + 1000*60*60*24*30).toISOString().slice(0,10);
+  state.intakeDate = await db.settings.get('intake_date', defaultIntake);
+  renderAll();
+  renderFaq();
+  renderAlumni();
+  renderShowcase();
+  applyBackendModeUI();
+  renderGalleryTabs();
+  renderGalleryGrid();
+  renderGuides();
+  initScrollFx();
+  startIntakeCountdown();
+  initCampusStrip();
+  populateCalc();
+  populateRegSchools();
+}
+
+/* ============ Course code helper ============ */
+function courseCode(c){
+  const sameSchool = state.courses.filter(x=>x.school===c.school);
+  const idx = sameSchool.findIndex(x=>x.id===c.id) + 1;
+  return (SCHOOL_PREFIX[c.school]||"GEN") + "-" + String(idx).padStart(2,'0');
+}
+
+/* ============ Navigation ============ */
+function go(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelector('[data-page="'+page+'"]').classList.add('active');
+  document.querySelectorAll('.navlink').forEach(n=>n.classList.remove('active'));
+  const map = {home:0, about:1, accreditation:1, 'academic-pathway':1, impact:1, alumni:1, schools:2, showcase:3, gallery:3, accommodation:3, facilities:4, news:4, guides:4, contact:5};
+  const idx = map[page];
+  if(idx!==undefined) document.querySelectorAll('.navlink')[idx].classList.add('active');
+  document.getElementById('mainNav').classList.remove('mobile-open');
+  window.scrollTo({top:0, behavior:'smooth'});
+  setTimeout(initScrollFx, 50);
+}
+function toggleMobileNav(){ document.getElementById('mainNav').classList.toggle('mobile-open'); }
+
+function renderSchoolsDropdown(){
+  const el = document.getElementById('schoolsDropdown');
+  if(!el) return;
+  el.innerHTML = SCHOOLS.map(s=>{
+    const count = state.courses.filter(c=>c.school===s).length;
+    return `<a onclick="gotoSchool('${s.replace(/'/g,"\\'")}')">${s}<span class="code">${count} ${count===1?'course':'courses'}</span></a>`;
+  }).join('') + '<div class="nav-dropdown-divider"></div><a onclick="closeDropdowns(); go(\'schools\')">View all schools <span class="code">→</span></a>';
+}
+function toggleDropdown(e, itemId){
+  e.preventDefault();
+  const item = document.getElementById(itemId);
+  const isOpen = item.classList.contains('open');
+  closeDropdowns();
+  if(!isOpen) item.classList.add('open');
+}
+function closeDropdowns(){
+  document.querySelectorAll('.nav-item.open').forEach(i=>i.classList.remove('open'));
+}
+document.addEventListener('click', (e)=>{
+  document.querySelectorAll('.nav-item').forEach(item=>{
+    if(!item.contains(e.target)) item.classList.remove('open');
+  });
+});
+function gotoSchool(schoolName){
+  closeDropdowns();
+  go('schools');
+  setSchool(schoolName);
+}
+
+function switchApp(view){
+  document.querySelectorAll('[data-view]').forEach(v=>v.classList.remove('active'));
+  document.querySelector('[data-view="'+view+'"]').classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* nav shrink on scroll */
+window.addEventListener('scroll', ()=>{
+  const h = document.getElementById('siteHeader');
+  if(!h) return;
+  if(window.scrollY > 30) h.classList.add('shrink'); else h.classList.remove('shrink');
+});
+
+/* scroll reveal + truss draw */
+let scrollObserver;
+function initScrollFx(){
+  if(scrollObserver) scrollObserver.disconnect();
+  scrollObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){
+        en.target.classList.add(en.target.classList.contains('truss-path') ? 'draw' : 'in');
+      }
+    });
+  }, {threshold:0.15});
+  document.querySelectorAll('.reveal, .truss-path').forEach(el=>scrollObserver.observe(el));
+}
+
+/* ============ Rendering ============ */
+function courseCardHtml(c, opts){
+  opts = opts||{};
+  return `<div class="course-card">
+    <div class="ccard-top"><span class="code">${courseCode(c)}</span><span class="lvl">${c.level}</span></div>
+    <h4>${c.title}</h4>
+    <span class="dur">${c.school} · ${c.duration}</span>
+    <span class="dur">${c.examBody} exam &middot; Entry: ${c.entry}</span>
+    <span class="dur" style="color:var(--signal-deep); font-weight:600;">${feeLabel(c.fee)}</span>
+    <div class="row-btn">
+      <a class="btn btn-ghost btn-sm" onclick="go('admissions')">Enquire</a>
+      ${opts.admin ? `<button class="icon-btn danger" onclick="removeCourse('${c.id}')">Remove</button>` : ''}
+    </div>
+  </div>`;
+}
+
+function renderAll(){
+  const featured = SCHOOLS.map(s=>state.courses.find(c=>c.school===s)).filter(Boolean);
+  document.getElementById('homeCourseGrid').innerHTML = featured.map(c=>courseCardHtml(c)).join('');
+
+  document.getElementById('schoolTabs').innerHTML = SCHOOLS.map(s=>
+    `<button class="school-tab ${s===state.activeSchool?'active':''}" onclick="setSchool('${s.replace(/'/g,"\\'")}')">${s}</button>`
+  ).join('');
+  renderSchoolCourses();
+
+  const newsHtml = state.news.slice().sort((a,b)=>b.ts-a.ts).map(n=>
+    `<div class="news-card"><span class="news-tag">${n.tag}</span><h4>${n.title}</h4><p>${n.body}</p></div>`).join('');
+  document.getElementById('newsGrid').innerHTML = newsHtml || '<div class="news-empty">No news posted yet.</div>';
+
+  document.getElementById('adminCourseTable').innerHTML = state.courses.map(c=>`
+    <tr><td class="mono" style="color:var(--signal-deep); font-size:12px;">${courseCode(c)}</td><td>${c.school}</td><td>${c.title}</td><td><span class="badge gold">${c.level}</span></td><td>${c.duration}</td><td class="mono" style="font-size:12px;">${c.examBody}</td><td class="mono" style="font-size:12px;">${c.entry}</td><td class="mono">${feeLabel(c.fee)}</td>
+    <td><button class="icon-btn danger" onclick="removeCourse('${c.id}')">Remove</button></td></tr>`).join('');
+
+  document.getElementById('adminNewsList').innerHTML = state.news.slice().sort((a,b)=>b.ts-a.ts).map(n=>
+    `<div class="list-item"><span><b>${n.title}</b><br><span style="color:var(--rivet); font-size:12.5px;">${n.tag}</span></span>
+     <button class="icon-btn danger" onclick="removeNews('${n.id}')">Remove</button></div>`).join('');
+
+  document.getElementById('testiGrid').innerHTML = state.testimonials.map(t=>`
+    <div class="testi-card ${t.placeholder?'placeholder':''}">
+      <p class="quote">${t.quote}</p>
+      <div class="testi-who"><div class="testi-avatar">${t.name.split(' ').map(n=>n[0]).slice(0,2).join('')}</div>
+        <div><b>${t.name}</b><span>${t.program}</span></div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('adminTestiList').innerHTML = state.testimonials.map(t=>
+    `<div class="list-item"><span><b>${t.name}</b> ${t.placeholder?'<span class=\"badge\">Placeholder</span>':''}<br><span style="color:var(--rivet); font-size:12.5px;">${t.program}</span></span>
+     <button class="icon-btn danger" onclick="removeTestimonial('${t.id}')">Remove</button></div>`).join('');
+
+  const sel = document.getElementById('dashCourseSelect');
+  if(sel){ sel.innerHTML = state.courses.map(c=>`<option value="${c.id}">${c.title} — ${c.school}</option>`).join(''); }
+  renderDashNews();
+  renderSchoolsDropdown();
+  renderHeroSpec();
+  renderTrustBar();
+}
+
+function renderTrustBar(){
+  const bodies = new Set();
+  state.courses.forEach(c=>{
+    if(c.examBody && c.examBody !== 'Internal' && c.examBody !== 'TBC'){
+      c.examBody.split('/').forEach(b=>bodies.add(b.trim()));
+    }
+  });
+  const list = Array.from(bodies).sort();
+  const el = document.getElementById('accreditationBadges');
+  if(el) el.innerHTML = list.map(b=>`<span>${b}</span>`).join('') || '<span>Pending</span>';
+  const fullEl = document.getElementById('accreditationFull');
+  if(fullEl) fullEl.textContent = list.join(', ') || 'Pending confirmation';
+  const impactSchools = document.getElementById('impactSchools');
+  const impactCourses = document.getElementById('impactCourses');
+  if(impactSchools) impactSchools.textContent = String(SCHOOLS.length).padStart(2,'0');
+  if(impactCourses) impactCourses.textContent = state.courses.length;
+}
+function renderHeroSpec(){
+  const el = document.getElementById('heroSpecRows');
+  if(!el) return;
+  el.innerHTML = SCHOOLS.map(s=>{
+    const list = state.courses.filter(c=>c.school===s);
+    const short = s.replace('School of ','');
+    return `<div class="spec-row"><span>${short}</span><span class="code">${list.length} program${list.length===1?'':'s'}</span></div>`;
+  }).join('');
+  const countEl = document.getElementById('heroSchoolCount');
+  const progEl = document.getElementById('heroCourseCount');
+  if(countEl) countEl.textContent = String(SCHOOLS.length).padStart(2,'0');
+  if(progEl) progEl.textContent = state.courses.length + '+';
+}
+function setSchool(s){
+  state.activeSchool = s; state.search=''; state.levelFilter='';
+  const se = document.getElementById('explorerSearch'); if(se) se.value='';
+  const le = document.getElementById('explorerLevel'); if(le) le.value='';
+  renderAll();
+}
+function onExplorerChange(){
+  state.search = document.getElementById('explorerSearch').value.trim().toLowerCase();
+  state.levelFilter = document.getElementById('explorerLevel').value;
+  renderSchoolCourses();
+}
+function renderSchoolCourses(){
+  const searching = state.search.length > 0;
+  let list = searching ? state.courses.slice() : state.courses.filter(c=>c.school===state.activeSchool);
+  if(state.search) list = list.filter(c=>c.title.toLowerCase().includes(state.search) || c.school.toLowerCase().includes(state.search));
+  if(state.levelFilter) list = list.filter(c=>c.level===state.levelFilter);
+
+  document.querySelectorAll('.school-tab').forEach(t=>t.style.opacity = searching ? '0.5' : '1');
+  const countEl = document.getElementById('explorerCount');
+  if(countEl){
+    countEl.textContent = searching
+      ? `${list.length} result${list.length===1?'':'s'} across all schools for "${document.getElementById('explorerSearch').value.trim()}"`
+      : `${list.length} course${list.length===1?'':'s'} in ${state.activeSchool}`;
+  }
+  document.getElementById('schoolCourseGrid').innerHTML = list.length
+    ? list.map(c=>courseCardHtml(searching ? c : c)).join('')
+    : '<div class="news-empty">No courses match your search.</div>';
+}
+
+function renderDashNews(){
+  const el = document.getElementById('dashNews');
+  if(!el) return;
+  el.innerHTML = state.news.slice().sort((a,b)=>b.ts-a.ts).slice(0,3).map(n=>
+    `<div class="list-item"><span><b>${n.title}</b><br><span style="color:var(--rivet); font-size:12.5px;">${n.body}</span></span><span class="badge">${n.tag}</span></div>`
+  ).join('') || '<p style="color:var(--rivet); font-size:13.5px;">No announcements yet.</p>';
+}
+
+/* ============ Virtual Campus Strip ============ */
+function initCampusStrip(){
+  const strip = document.getElementById('campusStrip');
+  const dotsEl = document.getElementById('campusDots');
+  if(!strip || !dotsEl) return;
+  const cards = Array.from(strip.children);
+  dotsEl.innerHTML = cards.map((_,i)=>`<div class="campus-dot ${i===0?'active':''}"></div>`).join('');
+  const dots = Array.from(dotsEl.children);
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){
+        const idx = cards.indexOf(en.target);
+        dots.forEach(d=>d.classList.remove('active'));
+        if(dots[idx]) dots[idx].classList.add('active');
+      }
+    });
+  }, {root:strip, threshold:0.6});
+  cards.forEach(c=>obs.observe(c));
+}
+function scrollCampus(dir){
+  const strip = document.getElementById('campusStrip');
+  if(!strip) return;
+  strip.scrollBy({left: dir * 300, behavior:'smooth'});
+}
+
+/* ============ Live Intake Countdown ============ */
+let intakeTimer;
+function startIntakeCountdown(){
+  if(intakeTimer) clearInterval(intakeTimer);
+  const tick = ()=>{
+    const target = new Date(state.intakeDate + 'T23:59:59').getTime();
+    const diff = target - Date.now();
+    const els = {d:document.getElementById('ctD'), h:document.getElementById('ctH'), m:document.getElementById('ctM'), s:document.getElementById('ctS')};
+    if(!els.d) return;
+    if(diff <= 0){ els.d.textContent='00'; els.h.textContent='00'; els.m.textContent='00'; els.s.textContent='00'; return; }
+    const day = Math.floor(diff/86400000);
+    const hr = Math.floor((diff%86400000)/3600000);
+    const min = Math.floor((diff%3600000)/60000);
+    const sec = Math.floor((diff%60000)/1000);
+    els.d.textContent = String(day).padStart(2,'0');
+    els.h.textContent = String(hr).padStart(2,'0');
+    els.m.textContent = String(min).padStart(2,'0');
+    els.s.textContent = String(sec).padStart(2,'0');
+  };
+  tick();
+  intakeTimer = setInterval(tick, 1000);
+}
+async function saveIntakeDate(){
+  const val = document.getElementById('intakeDateInput').value;
+  if(!val) return;
+  state.intakeDate = val;
+  await db.settings.set('intake_date', val);
+  startIntakeCountdown();
+}
+
+/* ============ Fee / Program Calculator ============ */
+function populateCalc(){
+  const schoolSel = document.getElementById('calcSchool');
+  if(!schoolSel) return;
+  schoolSel.innerHTML = SCHOOLS.map(s=>`<option value="${s}">${s}</option>`).join('');
+  onCalcSchoolChange();
+}
+function onCalcSchoolChange(){
+  const school = document.getElementById('calcSchool').value;
+  const courseSel = document.getElementById('calcCourse');
+  const list = state.courses.filter(c=>c.school===school);
+  courseSel.innerHTML = list.map(c=>`<option value="${c.id}">${c.title}</option>`).join('') || '<option>No courses yet</option>';
+  onCalcCourseChange();
+}
+function onCalcCourseChange(){
+  const courseSel = document.getElementById('calcCourse');
+  const course = state.courses.find(c=>c.id===courseSel.value);
+  document.getElementById('calcLevel').textContent = course ? course.level : '—';
+  document.getElementById('calcDuration').textContent = course ? course.duration.replace('Duration: ','') : '—';
+  document.getElementById('calcFee').textContent = course ? feeLabel(course.fee) : '—';
+}
+
+/* ============ Alumni & Student Showcase — placeholders pending real client content ============ */
+const ALUMNI_PLACEHOLDER = [
+  {name:"Lawrence Bahati", program:"ICT· 2025", quote:"Nextbridge gave me more than a certificate- it gave me practical skills, confidence, and the courage to pursue my career."},
+  {name:"Alfred Otieno", program:"Business Management  · 2025", quote:"Nextbridge helped me turn my potential into career."},
+  {name:"Jeremy", program:"Media · 2025", quote:"My expereience at Nextbridge was truly transformative. The practical training ans support prepared me for the real world and gave me confidence in my skills."}
+];
+function renderAlumni(){
+  const el = document.getElementById('alumniGrid');
+  if(!el) return;
+  el.innerHTML = ALUMNI_PLACEHOLDER.map(a=>`
+    <div class="testi-card placeholder">
+      <p class="quote">${a.quote}</p>
+      <div class="testi-who"><div class="testi-avatar">${a.name.split(' ').map(n=>n[0]).slice(0,2).join('')}</div>
+        <div><b>${a.name}</b><span>${a.program}</span></div>
+      </div>
+    </div>`).join('');
+}
+
+const SHOWCASE_PLACEHOLDER = [
+  {tag:"School of ICT", title:"Add a student project title", img:"6.jpg", desc:"Placeholder — replace with a real student project (e.g. an app, website, or portfolio piece) and credit the student."},
+  {tag:"School of Media", title:"Add a student project title", img:"7.jpg", desc:"Placeholder — replace with real student film/photography work and credit the student."},
+  {tag:"School of Beauty and Cosmetology", title:"Add a student project title", img:"beauty.jpg", desc:"Placeholder — replace with a real styled look or practical session photo and credit the student."}
+];
+function renderShowcase(){
+  const el = document.getElementById('showcaseGrid');
+  if(!el) return;
+  el.innerHTML = SHOWCASE_PLACEHOLDER.map(s=>`
+    <div class="testi-card placeholder" style="text-align:left;">
+      <div class="ph-wrap" style="height:150px; margin:-24px -24px 14px; width:calc(100% + 48px);">
+        <img src="${s.img}" class="ph-img" alt="${s.title}" onerror="phFallback(this)">
+        <div class="ph-fallback"><span>🎨</span><b>${s.title}</b><small>1000×750</small></div>
+      </div>
+      <span class="news-tag">${s.tag}</span>
+      <p class="quote" style="font-style:normal; margin-top:8px;">${s.desc}</p>
+    </div>`).join('');
+}
+
+/* ============ FAQ ============ */
+function renderFaq(){
+  const el = document.getElementById('faqList');
+  if(!el) return;
+  el.innerHTML = FAQS.map((f,i)=>`
+    <div class="faq-item" id="faq-${i}">
+      <div class="faq-q" onclick="toggleFaq(${i})"><span>${f.q}</span><span class="plus">+</span></div>
+      <div class="faq-a"><p>${f.a}</p></div>
+    </div>`).join('');
+}
+function toggleFaq(i){
+  document.getElementById('faq-'+i).classList.toggle('open');
+}
+
+/* ============ Gallery + Lightbox ============ */
+function renderGalleryTabs(){
+  const el = document.getElementById('galleryTabs');
+  if(!el) return;
+  el.innerHTML = GALLERY_CATEGORIES.map(c=>
+    `<button class="school-tab ${c===galleryFilter?'active':''}" onclick="setGalleryFilter('${c.replace(/'/g,"\\'")}')">${c}</button>`
+  ).join('');
+}
+function setGalleryFilter(cat){ galleryFilter = cat; renderGalleryTabs(); renderGalleryGrid(); }
+function renderGalleryGrid(){
+  const el = document.getElementById('galleryGrid');
+  if(!el) return;
+  const items = galleryFilter==='All' ? GALLERY_ITEMS : GALLERY_ITEMS.filter(g=>g.cat===galleryFilter);
+  el.innerHTML = items.map(g=>`
+    <div class="gallery-tile ${g.tall?'tall':''}" onclick="openLightboxById('${g.id}')">
+      <span class="gtag">${g.cat}</span>
+      <div class="ph-wrap">
+        <img src="${g.file}" class="ph-img" alt="${g.caption}" onerror="phFallback(this)">
+        <div class="ph-fallback"><span>📷</span><b>${g.caption}</b><small>${g.size}</small></div>
+      </div>
+    </div>`).join('');
+}
+function openLightboxById(id){
+  const item = GALLERY_ITEMS.find(g=>g.id===id);
+  if(item) openLightbox(item);
+}
+function openLightbox(item){
+  const img = document.getElementById('lightboxImg');
+  img.src = item.file;
+  img.style.display = 'block';
+  img.onerror = function(){ phFallback(this); };
+  img.parentElement.querySelector('.ph-fallback').style.display = 'none';
+  document.getElementById('lightboxFallbackText').textContent = item.caption;
+  document.getElementById('lightboxCaption').textContent = item.caption;
+  document.getElementById('lightboxCat').textContent = item.cat;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox(){ document.getElementById('lightbox').classList.remove('open'); }
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ closeLightbox(); closeProspectusModal(); } });
+document.getElementById('prospectusModal')?.addEventListener('click', (e)=>{ if(e.target.id==='prospectusModal') closeProspectusModal(); });
+
+/* ============ Guides ============ */
+function renderGuides(){
+  const el = document.getElementById('guideGrid');
+  if(!el) return;
+  el.innerHTML = GUIDES.map((g,i)=>`
+    <div class="guide-card" id="guide-${i}">
+      <div class="guide-media ph-wrap">
+        <img src="${g.img}" class="ph-img" alt="${g.title}" onerror="phFallback(this)">
+        <div class="ph-fallback"><span>📰</span><b>${g.title}</b><small>1000×500</small></div>
+      </div>
+      <div class="guide-body">
+        <span class="guide-tag">${g.tag}</span>
+        <h4>${g.title}</h4>
+        <p class="guide-excerpt">${g.excerpt}</p>
+        <p class="guide-full">${g.full}</p>
+        <a class="btn btn-ghost btn-sm" onclick="toggleGuide(${i})">Read more <svg class="icon"><use href="#i-arrow"/></svg></a>
+      </div>
+    </div>`).join('');
+}
+function toggleGuide(i){
+  const card = document.getElementById('guide-'+i);
+  card.classList.toggle('open');
+}
+
+/* ============ Testimonials admin ============ */
+async function addTestimonial(){
+  const name = document.getElementById('tName').value.trim();
+  const program = document.getElementById('tProgram').value.trim();
+  const quote = document.getElementById('tQuote').value.trim();
+  if(!name || !quote) return;
+  await db.testimonials.add({id:'t-'+Date.now(), name, program: program || 'Graduate', quote, placeholder:false});
+  state.testimonials = await db.testimonials.list();
+  document.getElementById('tName').value=''; document.getElementById('tProgram').value=''; document.getElementById('tQuote').value='';
+  renderAll();
+}
+async function removeTestimonial(id){
+  await db.testimonials.remove(id);
+  state.testimonials = await db.testimonials.list();
+  renderAll();
+}
+
+/* ============ Prospectus request modal ============ */
+function openProspectusModal(){
+  const sel = document.getElementById('prosSchool');
+  if(sel && !sel.dataset.filled){ sel.innerHTML = SCHOOLS.map(s=>`<option>${s}</option>`).join(''); sel.dataset.filled='1'; }
+  document.getElementById('prospectusMsg').innerHTML = '';
+  document.getElementById('prospectusModal').classList.add('open');
+}
+function closeProspectusModal(){ document.getElementById('prospectusModal').classList.remove('open'); }
+async function submitProspectus(){
+  const name = document.getElementById('prosName').value.trim();
+  const email = document.getElementById('prosEmail').value.trim();
+  const phone = document.getElementById('prosPhone').value.trim();
+  const school = document.getElementById('prosSchool').value;
+  const msgEl = document.getElementById('prospectusMsg');
+  if(!name || (!email && !phone)){ msgEl.innerHTML = '<div class="msg err">Please add your name and at least an email or phone number.</div>'; return; }
+  await db.prospectus.add({id:'pr-'+Date.now(), name, email, phone, school, ts:Date.now()});
+  msgEl.innerHTML = '<div class="msg ok">Thanks! We\'ll send the prospectus shortly.</div>';
+  setTimeout(closeProspectusModal, 1500);
+}
+
+/* ============ Admissions form ============ */
+async function submitApplication(e){
+  e.preventDefault();
+  const name = document.getElementById('apFullName').value.trim();
+  if(!name){ return; }
+  const app = {
+    id: 'app-'+Date.now(), name,
+    phone: document.getElementById('apPhone').value.trim(),
+    email: document.getElementById('apEmail').value.trim(),
+    school: document.getElementById('apSchool').value,
+    message: document.getElementById('apMsg').value.trim(),
+    ts: Date.now()
+  };
+  await db.applications.add(app);
+  document.getElementById('applyMsg').innerHTML = '<div class="msg ok">Application received. Our admissions team will contact you within 24 hours.</div>';
+  e.target.reset();
+}
+
+/* ============ Student Portal ============ */
+function switchPortalMode(mode){
+  const isNew = mode==='new';
+  document.getElementById('newStudentForm').style.display = isNew ? 'block' : 'none';
+  document.getElementById('returningStudentForm').style.display = isNew ? 'none' : 'block';
+  document.getElementById('tabNewBtn').classList.toggle('tab-active', isNew);
+  document.getElementById('tabReturningBtn').classList.toggle('tab-active', !isNew);
+  document.getElementById('portalTitle').textContent = isNew ? 'New Student Registration' : 'Returning Student Login';
+  document.getElementById('portalSub').textContent = isNew
+    ? 'Pick your school and course — your admission number is generated for you.'
+    : 'Enter the admission number you were given at registration.';
+  document.getElementById('portalMsg').innerHTML = '';
+}
+function populateRegSchools(){
+  const sel = document.getElementById('regSchool');
+  if(!sel) return;
+  sel.innerHTML = SCHOOLS.map(s=>`<option value="${s}">${s}</option>`).join('');
+  onRegSchoolChange();
+}
+function onRegSchoolChange(){
+  const school = document.getElementById('regSchool').value;
+  const courseSel = document.getElementById('regCourse');
+  const list = state.courses.filter(c=>c.school===school);
+  courseSel.innerHTML = list.map(c=>`<option value="${c.id}">${c.title} (${c.level})</option>`).join('') || '<option>No courses yet</option>';
+}
+async function registerStudent(){
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const school = document.getElementById('regSchool').value;
+  const courseSel = document.getElementById('regCourse');
+  const course = state.courses.find(c=>c.id===courseSel.value);
+  const msgEl = document.getElementById('portalMsg');
+  if(!name || !course){ msgEl.innerHTML = '<div class="msg err">Please enter your name and pick a course.</div>'; return; }
+  const prefix = SCHOOL_PREFIX[school] || 'GEN';
+
+  if(BACKEND_LIVE){
+    if(!email || !password){ msgEl.innerHTML = '<div class="msg err">Email and password are required to create your account.</div>'; return; }
+    const {data: signUpData, error: signUpError} = await sb.auth.signUp({email, password});
+    if(signUpError){ msgEl.innerHTML = `<div class="msg err">${signUpError.message}</div>`; return; }
+    const userId = signUpData.user?.id;
+    if(!userId){ msgEl.innerHTML = '<div class="msg ok">Check your email to confirm your account, then log in.</div>'; return; }
+    const {data: admData, error: admError} = await sb.rpc('next_admission_number', {p_prefix: prefix});
+    if(admError){ msgEl.innerHTML = `<div class="msg err">${admError.message}</div>`; return; }
+    const adm = admData;
+    const {error: profileError} = await sb.from('profiles').insert({id:userId, adm, full_name:name, school, course_id:course.id, semester:1, progress:0});
+    if(profileError){ msgEl.innerHTML = `<div class="msg err">${profileError.message}</div>`; return; }
+    state.student = {adm, name, school, courseId: course.id, semester:1, progress:0};
+    msgEl.innerHTML = '';
+    showDashboard();
+  } else {
+    const counters = await loadShared('nb-adm-counters', {});
+    const next = (counters[prefix] || 0) + 1;
+    counters[prefix] = next;
+    await saveShared('nb-adm-counters', counters);
+    const yy = String(new Date().getFullYear()).slice(-2);
+    const adm = `NXT/${prefix}/${String(next).padStart(3,'0')}/${yy}`;
+    const profile = { adm, name, email, school, courseId: course.id, semester: 1, progress: 0 };
+    await savePersonal('nb-student-profile', profile);
+    state.student = profile;
+    msgEl.innerHTML = '';
+    showDashboard();
+  }
+}
+async function portalLogin(){
+  const msgEl = document.getElementById('portalMsg');
+
+  if(BACKEND_LIVE){
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    if(!email || !password){ msgEl.innerHTML = '<div class="msg err">Please enter your email and password.</div>'; return; }
+    const {data, error} = await sb.auth.signInWithPassword({email, password});
+    if(error){ msgEl.innerHTML = `<div class="msg err">${error.message}</div>`; return; }
+    const {data: profile, error: profileError} = await sb.from('profiles').select('*').eq('id', data.user.id).single();
+    if(profileError || !profile){ msgEl.innerHTML = '<div class="msg err">No student profile found for this account.</div>'; return; }
+    state.student = {adm:profile.adm, name:profile.full_name, school:profile.school, courseId:profile.course_id, semester:profile.semester, progress:profile.progress};
+    msgEl.innerHTML = '';
+    showDashboard();
+  } else {
+    const profile = await loadPersonal('nb-student-profile');
+    if(!profile){
+      msgEl.innerHTML = '<div class="msg err">We couldn\'t find a profile on this device. New students should register first.</div>';
+      return;
+    }
+    state.student = profile;
+    msgEl.innerHTML = '';
+    showDashboard();
+  }
+}
+async function portalLogout(){
+  if(BACKEND_LIVE){ await sb.auth.signOut(); }
+  state.student = null;
+  document.getElementById('portalLogin').style.display='block';
+  document.getElementById('portalDash').style.display='none';
+  document.getElementById('portalLogoutBtn').style.display='none';
+  ['regName','regEmail','regPassword','loginEmail','loginPassword'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  switchPortalMode('new');
+}
+function showDashboard(){
+  document.getElementById('portalLogin').style.display='none';
+  document.getElementById('portalDash').style.display='block';
+  document.getElementById('portalLogoutBtn').style.display='inline-flex';
+  const p = state.student;
+  document.getElementById('dashGreeting').textContent = 'Welcome back, ' + p.name.split(' ')[0];
+  document.getElementById('dashAdm').textContent = 'Admission No. ' + p.adm;
+  document.getElementById('profName').textContent = p.name;
+  document.getElementById('profAdm').textContent = p.adm;
+  document.getElementById('profSchool').textContent = p.school;
+  document.getElementById('statSem').textContent = 'SEM ' + p.semester;
+  document.getElementById('statProg').textContent = p.progress + '%';
+  const sel = document.getElementById('dashCourseSelect');
+  if(sel && p.courseId) sel.value = p.courseId;
+  updateEnrollment(true);
+}
+async function updateEnrollment(silent){
+  const sel = document.getElementById('dashCourseSelect');
+  const course = state.courses.find(c=>c.id===sel.value);
+  if(!course) return;
+  document.getElementById('statCourse').textContent = course.title;
+  document.getElementById('profSchool').textContent = course.school;
+  if(!silent && state.student){
+    state.student.courseId = course.id;
+    state.student.school = course.school;
+    await savePersonal('nb-student-profile', state.student);
+  }
+}
+
+/* ============ Admin ============ */
+const ADMIN_PASSWORD = "nextbridge2026";
+async function adminLoginFn(){
+  const msgEl = document.getElementById('adminMsg');
+  if(BACKEND_LIVE){
+    const email = document.getElementById('adminEmail').value.trim();
+    const pass = document.getElementById('adminPass').value;
+    if(!email || !pass){ msgEl.innerHTML = '<div class="msg err">Please enter your staff email and password.</div>'; return; }
+    const {data, error} = await sb.auth.signInWithPassword({email, password:pass});
+    if(error){ msgEl.innerHTML = `<div class="msg err">${error.message}</div>`; return; }
+    const {data: profile} = await sb.from('profiles').select('is_admin').eq('id', data.user.id).single();
+    if(!profile || !profile.is_admin){
+      await sb.auth.signOut();
+      msgEl.innerHTML = '<div class="msg err">This account isn\'t set up as staff. Contact the site administrator.</div>';
+      return;
+    }
+  } else {
+    const pass = document.getElementById('adminPass').value;
+    if(pass !== ADMIN_PASSWORD){ msgEl.innerHTML = '<div class="msg err">Incorrect password.</div>'; return; }
+  }
+  msgEl.innerHTML='';
+  document.getElementById('adminLogin').style.display='none';
+  document.getElementById('adminDash').style.display='block';
+  document.getElementById('adminLogoutBtn').style.display='inline-flex';
+  const dateInput = document.getElementById('intakeDateInput');
+  if(dateInput && state.intakeDate) dateInput.value = state.intakeDate;
+}
+async function adminLogout(){
+  if(BACKEND_LIVE){ await sb.auth.signOut(); }
+  document.getElementById('adminLogin').style.display='block';
+  document.getElementById('adminDash').style.display='none';
+  document.getElementById('adminLogoutBtn').style.display='none';
+  document.getElementById('adminPass').value='';
+  const emailEl = document.getElementById('adminEmail'); if(emailEl) emailEl.value='';
+}
+async function addCourse(){
+  const title = document.getElementById('cTitle').value.trim();
+  const dur = document.getElementById('cDur').value.trim();
+  const feeVal = document.getElementById('cFee').value.trim();
+  const examBody = document.getElementById('cExamBody').value.trim() || 'Internal';
+  const entry = document.getElementById('cEntry').value.trim() || 'Open';
+  if(!title || !dur) return;
+  await db.courses.add({
+    id:'c-'+Date.now(), school: document.getElementById('cSchool').value, title,
+    level: document.getElementById('cLevel').value, duration: dur,
+    examBody, entry,
+    fee: feeVal ? Number(feeVal) : null
+  });
+  state.courses = await db.courses.list();
+  document.getElementById('cTitle').value=''; document.getElementById('cDur').value=''; document.getElementById('cFee').value='';
+  document.getElementById('cExamBody').value=''; document.getElementById('cEntry').value='';
+  renderAll();
+  populateCalc();
+  populateRegSchools();
+}
+async function removeCourse(id){
+  await db.courses.remove(id);
+  state.courses = await db.courses.list();
+  renderAll();
+  populateCalc();
+  populateRegSchools();
+}
+async function addNews(){
+  const title = document.getElementById('nTitle').value.trim();
+  const tag = document.getElementById('nTag').value.trim() || 'News';
+  const body = document.getElementById('nBody').value.trim();
+  if(!title) return;
+  await db.news.add({id:'n-'+Date.now(), tag, title, body, ts: Date.now()});
+  state.news = await db.news.list();
+  document.getElementById('nTitle').value=''; document.getElementById('nTag').value=''; document.getElementById('nBody').value='';
+  renderAll();
+}
+async function removeNews(id){
+  await db.news.remove(id);
+  state.news = await db.news.list();
+  renderAll();
+}
+
+initData();
+</script>
+</body>
+</html>
+
+
